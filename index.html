@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>［屋号］｜外構・エクステリア</title>
+<meta name="description" content="外構・エクステリア工事を、完璧に整えすぎない庭という思想で。［屋号］が、住まいの静けさをかたちにします。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-canvas: #E8E9EB;
+    --color-plaster: #DADCDE;
+    --color-fog-dark: rgba(15, 17, 22, 0.55);
+    --color-ink: #14161C;
+    --color-ink-soft: #565A5E;
+    --color-accent: #26394B;
+    --color-hairline: #C7C9CB;
+    --color-hairline-dark: rgba(255, 255, 255, 0.14);
+    --color-highlight: rgba(255, 255, 255, 0.08);
+    --color-on-ink: #ECEDEE;
+
+    --font-heading: "Shippori Mincho", serif;
+    --font-body: "Zen Kaku Gothic New", sans-serif;
+
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-9: 120px;
+    --max-width: 1200px;
+
+    --radius: 0px;
+    --motion-duration: 700ms;
+    --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1 { font-family: var(--font-heading); font-weight: 400; margin: 0; letter-spacing: -0.01em; }
+
+  a { color: inherit; }
+
+  /* ---------- Scroll progress ---------- */
+  .scroll-progress { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(199,201,203,0.35); z-index: 200; }
+  .scroll-progress-bar { height: 100%; width: 100%; background: var(--color-accent); transform: scaleX(var(--sp, 0)); transform-origin: left; }
+
+  /* ---------- Nav ---------- */
+  .site-nav {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+    padding: var(--space-5) var(--space-6);
+    display: flex; align-items: center; justify-content: space-between;
+    color: var(--color-on-ink);
+  }
+  .site-nav .logo {
+    font-family: var(--font-heading); font-size: 20px; text-decoration: none;
+  }
+  .site-nav .nav-links {
+    display: flex; gap: var(--space-6); list-style: none; margin: 0; padding: 0;
+  }
+  .site-nav .nav-links a {
+    font-size: 13px; letter-spacing: 0.04em; text-decoration: none;
+    opacity: 0.85; transition: opacity var(--motion-duration) var(--motion-ease);
+  }
+  .site-nav .nav-links a:hover { opacity: 1; }
+  .site-nav .nav-links { display: none; }
+  @media (min-width: 860px) {
+    .site-nav .nav-links { display: flex; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero-media { position: absolute; inset: 0; overflow: hidden; }
+  .hero-photo {
+    position: absolute; top: -15%; left: 0; width: 100%; height: 130%;
+    object-fit: cover;
+    transform: translateY(calc(var(--parallax, 0) * 1%));
+  }
+  .hero-scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(13,15,20,0.55) 0%, rgba(13,15,20,0.35) 45%, rgba(13,15,20,0.75) 100%);
+  }
+  .hero-scrim::after {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: var(--color-highlight);
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-6);
+    color: var(--color-on-ink);
+  }
+  .hero-content .eyebrow {
+    display: block;
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(236,237,238,0.65);
+    margin-bottom: var(--space-5);
+  }
+  .hero-content h1 {
+    font-size: clamp(32px, 5.5vw, 60px);
+    line-height: 1.5;
+  }
+  .split-lines .line { display: block; overflow: hidden; }
+  .split-lines .line span {
+    display: inline-block;
+    transform: translateY(110%);
+    opacity: 0;
+    transition: transform 0.9s var(--motion-ease), opacity 0.9s var(--motion-ease);
+  }
+  .split-lines.in .line:nth-child(1) span { transition-delay: 100ms; }
+  .split-lines.in .line:nth-child(2) span { transition-delay: 230ms; }
+  .split-lines.in .line span { transform: translateY(0); opacity: 1; }
+
+  .hero-lede {
+    max-width: 32em;
+    margin: var(--space-6) 0 0 0;
+    font-size: 16px;
+    color: rgba(236,237,238,0.8);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity var(--motion-duration) var(--motion-ease), transform var(--motion-duration) var(--motion-ease);
+    transition-delay: 500ms;
+  }
+  .hero-lede.in { opacity: 1; transform: translateY(0); }
+
+  .cta {
+    position: relative;
+    display: inline-block;
+    margin-top: var(--space-9);
+    padding: 14px 36px;
+    border: 1px solid rgba(236,237,238,0.4);
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-on-ink);
+    text-decoration: none;
+    transition: color var(--motion-duration) var(--motion-ease), border-color var(--motion-duration) var(--motion-ease);
+    opacity: 0;
+    transform: translateY(12px);
+    transition-delay: 700ms, 700ms;
+  }
+  .cta.in { opacity: 1; transform: translateY(0); transition: opacity var(--motion-duration) var(--motion-ease) 700ms, transform var(--motion-duration) var(--motion-ease) 700ms, color var(--motion-duration) var(--motion-ease), border-color var(--motion-duration) var(--motion-ease); }
+  .cta::before {
+    content: "";
+    position: absolute;
+    inset: -24px;
+    background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity var(--motion-duration) var(--motion-ease);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .cta:hover { border-color: #ffffff; }
+  .cta:hover::before { opacity: 0.35; }
+
+  .scroll-cue {
+    position: absolute; bottom: var(--space-6); left: 50%; transform: translateX(-50%);
+    z-index: 2;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(236,237,238,0.6);
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+  }
+  .scroll-cue::after {
+    content: "";
+    width: 1px; height: 32px;
+    background: rgba(236,237,238,0.4);
+  }
+
+  @media (max-width: 640px) {
+    .hero-content { padding: 0 var(--space-5); }
+    .cta { margin-top: var(--space-6); }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" aria-hidden="true"><div class="scroll-progress-bar"></div></div>
+
+<header class="site-nav">
+  <a class="logo" href="#">［屋号］</a>
+  <ul class="nav-links">
+    <li><a href="#concept">Concept</a></li>
+    <li><a href="#works">Works</a></li>
+    <li><a href="#service">Service</a></li>
+    <li><a href="#company">Company</a></li>
+  </ul>
+  <a class="cta" style="margin-top:0; padding:10px 24px; opacity:1; transform:none; transition:none;" href="#contact">お問い合わせ</a>
+</header>
+
+<section class="hero">
+  <div class="hero-media">
+    <img class="hero-photo" src="images/roji-gate-dusk.png" alt="露地の飛び石と、灯りの灯る門" data-parallax>
+    <div class="hero-scrim"></div>
+  </div>
+  <div class="hero-content">
+    <span class="eyebrow">Exterior / Garden Design</span>
+    <h1 class="split-lines" id="hero-h1">
+      <span class="line"><span>庭に、</span></span>
+      <span class="line"><span>静けさを設計する。</span></span>
+    </h1>
+    <p class="hero-lede" id="hero-lede">外構・エクステリア工事を、完璧に整えすぎない庭という思想で。［屋号］が、住まいの静けさをかたちにします。</p>
+    <a class="cta" id="hero-cta" href="#contact">お問い合わせ</a>
+  </div>
+  <span class="scroll-cue">Scroll</span>
+</section>
+
+<script src="https://unpkg.com/lenis@1/dist/lenis.min.js"></script>
+<script>
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReducedMotion && window.Lenis) {
+    window.__lenis = new Lenis({ autoRaf: true });
+  }
+
+  const progressBar = document.querySelector('.scroll-progress-bar');
+  if (progressBar) {
+    const updateProgress = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? window.scrollY / max : 0;
+      progressBar.style.setProperty('--sp', p.toFixed(4));
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  }
+
+  const parallaxEls = document.querySelectorAll('[data-parallax]');
+  if (parallaxEls.length && !prefersReducedMotion) {
+    const updateParallax = () => {
+      const vh = window.innerHeight;
+      parallaxEls.forEach(el => {
+        const rect = el.parentElement.getBoundingClientRect();
+        const centerProgress = (rect.top + rect.height / 2) / vh;
+        const clamped = Math.min(Math.max(centerProgress, 0), 1);
+        const shift = (clamped - 0.5) * -16;
+        el.style.setProperty('--parallax', shift.toFixed(2));
+      });
+    };
+    window.addEventListener('scroll', updateParallax, { passive: true });
+    updateParallax();
+  }
+
+  // Hero entrance: fires once on load, not on scroll (it's the first thing the visitor sees)
+  window.addEventListener('load', () => {
+    if (prefersReducedMotion) {
+      document.getElementById('hero-h1').classList.add('in');
+      document.getElementById('hero-lede').classList.add('in');
+      document.getElementById('hero-cta').classList.add('in');
+      return;
+    }
+    requestAnimationFrame(() => {
+      document.getElementById('hero-h1').classList.add('in');
+      document.getElementById('hero-lede').classList.add('in');
+      document.getElementById('hero-cta').classList.add('in');
+    });
+  });
+</script>
+
+</body>
+</html>

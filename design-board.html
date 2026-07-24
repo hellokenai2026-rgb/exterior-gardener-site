@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外構・庭師コーポレートサイト — Design Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Colors */
+    --color-canvas: #E8E9EB;
+    --color-plaster: #DADCDE;
+    --color-fog: rgba(232, 233, 235, 0.72);
+    --color-fog-dark: rgba(15, 17, 22, 0.55);
+    --color-ink: #14161C;
+    --color-ink-soft: #565A5E;
+    --color-accent: #26394B;
+    --color-hairline: #C7C9CB;
+    --color-hairline-dark: rgba(255, 255, 255, 0.14);
+    --color-highlight: rgba(255, 255, 255, 0.08);
+    --color-on-ink: #ECEDEE;
+    --gradient-aurora:
+      radial-gradient(ellipse at 28% 22%, rgba(86, 140, 130, 0.28), transparent 45%),
+      linear-gradient(160deg, #0d1512 0%, #12181d 45%, #14161C 100%);
+
+    /* Typography */
+    --font-heading: "Shippori Mincho", serif;
+    --font-body: "Zen Kaku Gothic New", sans-serif;
+    --text-display: clamp(36px, 6vw, 64px);
+    --text-h2: clamp(28px, 4vw, 40px);
+    --text-h3: clamp(20px, 2.4vw, 24px);
+    --text-body: 16px;
+    --text-caption: 12px;
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 80px;
+    --space-9: 120px;
+    --section-gap: clamp(64px, 10vw, 120px);
+    --max-width: 1120px;
+
+    /* Shape & Elevation */
+    --radius: 0px;
+    --shadow-1: 16px 20px 48px rgba(20, 22, 28, 0.16);
+
+    /* Motion */
+    --motion-duration: 700ms;
+    --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --motion-stagger: 100ms;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 { font-family: var(--font-heading); font-weight: 400; margin: 0; letter-spacing: -0.01em; }
+
+  .wrap { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-6); }
+
+  section { padding: var(--section-gap) 0; border-bottom: 1px solid var(--color-hairline); }
+  section:last-of-type { border-bottom: none; }
+
+  .eyebrow {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    margin-bottom: var(--space-4);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--motion-duration) var(--motion-ease), transform var(--motion-duration) var(--motion-ease);
+  }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    padding: var(--space-9) var(--space-6);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: var(--color-highlight);
+  }
+  .hero .wrap { max-width: var(--max-width); }
+  .hero .eyebrow { color: rgba(236,237,238,0.6); }
+  .hero h1 { font-size: var(--text-display); line-height: 1.3; max-width: 14em; }
+  .hero p.lede {
+    margin-top: var(--space-6);
+    max-width: 42em;
+    color: rgba(236,237,238,0.78);
+    font-size: 17px;
+  }
+  .hero .metaphor {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-hairline-dark);
+    font-family: var(--font-heading);
+    font-size: 20px;
+    line-height: 1.9;
+    color: var(--color-on-ink);
+    max-width: 34em;
+  }
+
+  h2.section-title { font-size: var(--text-h2); margin-bottom: var(--space-3); }
+  p.section-desc { color: var(--color-ink-soft); max-width: 40em; margin: 0 0 var(--space-7) 0; }
+
+  /* ---------- Colors ---------- */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-6);
+  }
+  .swatch {
+    border: 1px solid var(--color-hairline);
+  }
+  .swatch-fill { height: 96px; }
+  .swatch-body { padding: var(--space-4); background: var(--color-canvas); }
+  .swatch-name { font-family: var(--font-heading); font-size: 17px; }
+  .swatch-hex { font-family: monospace; font-size: 13px; color: var(--color-ink-soft); margin-top: var(--space-1); }
+  .swatch-use { font-size: 13px; color: var(--color-ink-soft); margin-top: var(--space-3); line-height: 1.6; }
+
+  /* ---------- Typography ---------- */
+  .type-row { display: flex; align-items: baseline; gap: var(--space-6); padding: var(--space-5) 0; border-top: 1px solid var(--color-hairline); flex-wrap: wrap; }
+  .type-row:last-child { border-bottom: 1px solid var(--color-hairline); }
+  .type-label { width: 140px; flex-shrink: 0; font-size: var(--text-caption); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink-soft); }
+  .type-sample.display { font-family: var(--font-heading); font-size: var(--text-display); line-height: 1.2; }
+  .type-sample.h2 { font-family: var(--font-heading); font-size: var(--text-h2); }
+  .type-sample.h3 { font-family: var(--font-heading); font-size: var(--text-h3); }
+  .type-sample.body { font-family: var(--font-body); font-size: var(--text-body); max-width: 32em; }
+  .type-sample.caption { font-family: var(--font-body); font-size: var(--text-caption); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* ---------- Spacing ---------- */
+  .space-row { display: flex; align-items: center; gap: var(--space-5); padding: var(--space-3) 0; }
+  .space-bar { background: var(--color-ink); height: 8px; }
+  .space-label { font-family: monospace; font-size: 13px; color: var(--color-ink-soft); width: 90px; }
+
+  /* ---------- Shape & Elevation ---------- */
+  .shape-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-6); }
+  .shape-card { background: var(--color-plaster); padding: var(--space-6); border-radius: var(--radius); }
+  .shape-card.wrong { border-radius: 18px; position: relative; }
+  .shape-card.wrong::after {
+    content: "✕ 使用しない";
+    position: absolute; top: var(--space-4); right: var(--space-4);
+    font-size: 12px; color: var(--color-accent);
+  }
+  .shape-card.shadow { box-shadow: var(--shadow-1); background: var(--color-canvas); }
+  .shape-card h4 { font-family: var(--font-heading); font-weight: 400; margin: 0 0 var(--space-2) 0; }
+  .shape-card p { margin: 0; font-size: 13px; color: var(--color-ink-soft); }
+
+  /* ---------- Surfaces ---------- */
+  .surface-stack { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--color-hairline); border: 1px solid var(--color-hairline); }
+  .surface { min-height: 180px; padding: var(--space-5); display: flex; flex-direction: column; justify-content: flex-end; }
+  .surface .name { font-family: var(--font-heading); font-size: 18px; }
+  .surface .hex { font-family: monospace; font-size: 12px; margin-top: var(--space-1); }
+  .surface.canvas { background: var(--color-canvas); }
+  .surface.plaster {
+    background-color: var(--color-plaster);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  }
+  .surface.fog { background: linear-gradient(180deg, var(--color-canvas), var(--color-fog-dark)); color: var(--color-on-ink); }
+  .surface.ink {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    position: relative;
+  }
+  .surface.ink::before { content:""; position:absolute; top:0; left:0; right:0; height:1px; background: var(--color-highlight); }
+
+  .aurora-demo {
+    margin-top: var(--space-6);
+    min-height: 280px;
+    background: var(--gradient-aurora);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--space-6);
+    color: var(--color-on-ink);
+  }
+  .aurora-demo::before { content:""; position:absolute; top:0; left:0; right:0; height:1px; background: var(--color-highlight); }
+  .aurora-demo .aurora-label { font-family: var(--font-heading); font-size: 20px; }
+  .aurora-demo .aurora-note { font-size: 13px; color: rgba(236,237,238,0.65); margin-top: var(--space-2); max-width: 32em; }
+
+  /* ---------- Motion / CTA ---------- */
+  .motion-demo { display: flex; flex-wrap: wrap; gap: var(--space-7); align-items: center; }
+  .cta {
+    position: relative;
+    display: inline-block;
+    padding: 14px 36px;
+    border: 1px solid var(--color-hairline);
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: color var(--motion-duration) var(--motion-ease), border-color var(--motion-duration) var(--motion-ease);
+  }
+  .cta::before {
+    content: "";
+    position: absolute;
+    inset: -24px;
+    background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity var(--motion-duration) var(--motion-ease);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .cta:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  .cta:hover::before { opacity: 0.16; }
+  .motion-note { font-size: 13px; color: var(--color-ink-soft); max-width: 22em; }
+
+  /* ---------- Triad (石組み) ---------- */
+  .triad {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 0.9fr;
+    gap: var(--space-6);
+    align-items: end;
+  }
+  .triad .stone { background: var(--color-plaster); padding: var(--space-6); }
+  .triad .stone:nth-child(1) { height: 260px; }
+  .triad .stone:nth-child(2) { height: 190px; margin-top: var(--space-7); }
+  .triad .stone:nth-child(3) { height: 220px; }
+  .triad .stone h4 { font-family: var(--font-heading); font-weight: 400; font-size: 18px; margin: 0 0 var(--space-2) 0; }
+  .triad .stone p { font-size: 13px; color: var(--color-ink-soft); margin: 0; }
+  .triad .stone[data-i="0"] { animation: fadeUp var(--motion-duration) var(--motion-ease) both; animation-delay: 0ms; }
+  .triad .stone[data-i="1"] { animation: fadeUp var(--motion-duration) var(--motion-ease) both; animation-delay: 100ms; }
+  .triad .stone[data-i="2"] { animation: fadeUp var(--motion-duration) var(--motion-ease) both; animation-delay: 200ms; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- Imagery ---------- */
+  .imagery-plate {
+    height: 360px;
+    background:
+      radial-gradient(ellipse at 75% 30%, rgba(236,209,170,0.18), transparent 55%),
+      linear-gradient(200deg, #0c1016 0%, #1c222b 45%, #2a3440 100%);
+    position: relative;
+    display: flex; align-items: flex-end; padding: var(--space-6);
+  }
+  .imagery-plate::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+  .imagery-plate .caption { position: relative; z-index: 1; color: rgba(236,237,238,0.75); font-size: 13px; letter-spacing: 0.04em; }
+
+  /* ---------- Gradient & Texture Studies ---------- */
+  .study-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+  .study-card { display: flex; flex-direction: column; }
+  .study-fill {
+    height: 220px;
+    position: relative;
+    display: flex; align-items: flex-end;
+    padding: var(--space-4);
+  }
+  .study-fill.moyaake {
+    background:
+      radial-gradient(ellipse at 50% 35%, rgba(232,233,235,0.9), rgba(218,220,222,0.4) 40%, transparent 70%),
+      radial-gradient(ellipse at 75% 80%, rgba(86,120,110,0.14), transparent 60%),
+      linear-gradient(180deg, #cfd2d1 0%, #aeb4b2 100%);
+  }
+  .study-fill.shiomi {
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(180,205,215,0.5), transparent 55%),
+      linear-gradient(200deg, #1b2c3a 0%, #26394B 55%, #3d5b70 100%);
+  }
+  .study-fill.aurora-mini { background: var(--gradient-aurora); }
+  .study-fill .study-tag {
+    font-family: var(--font-body); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 4px 10px; background: rgba(20,22,28,0.55); color: #fff;
+  }
+  .study-fill.moyaake .study-tag { background: rgba(20,22,28,0.5); }
+  .study-card.excluded .study-fill {
+    background: repeating-linear-gradient(135deg, #e2c7a8, #e2c7a8 6px, #d9b98f 6px, #d9b98f 12px);
+    opacity: 0.35;
+  }
+  .study-meta { padding: var(--space-4) 0; }
+  .study-name { font-family: var(--font-heading); font-size: 17px; }
+  .study-note { font-size: 13px; color: var(--color-ink-soft); margin-top: var(--space-2); line-height: 1.6; }
+
+  .texture-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-top: var(--space-8); }
+  .emboss-demo {
+    height: 260px;
+    background: var(--color-ink);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .emboss-nest {
+    width: 150px; height: 190px;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,0.14),
+      inset 0 0 0 13px rgba(255,255,255,0.10),
+      inset 0 0 0 26px rgba(255,255,255,0.08),
+      inset 0 0 0 39px rgba(255,255,255,0.06),
+      inset 0 0 0 52px rgba(255,255,255,0.04);
+  }
+  .objet-demo {
+    height: 260px;
+    background-color: var(--color-plaster);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+    position: relative;
+  }
+  .objet-stone {
+    position: absolute; right: 22%; bottom: 20%;
+    width: 64px; height: 50px;
+    background: linear-gradient(160deg, #f1f1ee, #c7c8c4);
+    border-radius: 48% 52% 45% 55% / 55% 48% 52% 45%;
+    box-shadow: 10px 14px 28px rgba(20,22,28,0.22);
+  }
+  .study-caption { font-size: 13px; color: var(--color-ink-soft); margin-top: var(--space-3); }
+
+  /* ---------- Animation Patterns ---------- */
+  .anim-note-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-bottom: var(--space-8); }
+  .anim-note-card { border: 1px solid var(--color-hairline); padding: var(--space-5); }
+  .anim-note-card h4 { font-family: var(--font-heading); font-weight: 400; font-size: 17px; margin: 0 0 var(--space-2) 0; }
+  .anim-note-card p { font-size: 13px; color: var(--color-ink-soft); margin: 0; line-height: 1.7; }
+  .anim-note-card code { font-family: monospace; font-size: 12px; background: var(--color-plaster); padding: 1px 4px; }
+
+  .pin-demo-label { font-size: 13px; color: var(--color-ink-soft); margin-bottom: var(--space-4); }
+  .pin-demo-box {
+    height: 360px;
+    overflow-y: scroll;
+    overscroll-behavior: contain;
+    border: 1px solid var(--color-hairline);
+    position: relative;
+    scrollbar-width: thin;
+  }
+  .pin-demo-inner { height: 700px; position: relative; }
+  .pin-demo-sticky {
+    position: sticky;
+    top: 0;
+    height: 360px;
+    background: var(--color-ink);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .pin-demo-sticky .pin-text {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    line-height: 1.6;
+    color: var(--color-on-ink);
+    text-align: center;
+    opacity: calc(1 - var(--p, 0));
+    filter: blur(calc(var(--p, 0) * 10px));
+    transform: scale(calc(1 + var(--p, 0) * 0.15));
+  }
+  .pin-demo-sticky .pin-hint {
+    position: absolute; bottom: var(--space-4); left: 50%; transform: translateX(-50%);
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(236,237,238,0.5);
+    opacity: calc(1 - var(--p, 0));
+  }
+  .pin-demo-fill { height: 400px; display: flex; align-items: center; justify-content: center; background: var(--color-plaster); }
+  .pin-demo-fill span { font-size: 13px; color: var(--color-ink-soft); }
+
+  /* ---------- Element Animations ---------- */
+  .scroll-progress { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(199,201,203,0.35); z-index: 100; }
+  .scroll-progress-bar { height: 100%; width: 100%; background: var(--color-accent); transform: scaleX(var(--sp, 0)); transform-origin: left; }
+
+  .elem-anim-block { margin-bottom: var(--space-8); }
+  .elem-anim-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); flex-wrap: wrap; }
+  .elem-anim-head .study-name { margin: 0; }
+  .replay-btn {
+    background: none; border: none; padding: 0;
+    font-family: var(--font-body); font-size: 12px; letter-spacing: 0.04em;
+    color: var(--color-accent); text-decoration: underline; cursor: pointer;
+  }
+
+  .text-reveal-demo { height: 200px; background: var(--color-ink); display: flex; align-items: center; justify-content: center; }
+  .split-lines { margin: 0; text-align: center; }
+  .split-lines .line { display: block; overflow: hidden; line-height: 1.5; }
+  .split-lines .line span {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: 26px;
+    color: var(--color-on-ink);
+    transform: translateY(110%);
+    opacity: 0;
+    transition: transform 0.8s var(--motion-ease), opacity 0.8s var(--motion-ease);
+  }
+  .split-lines.in .line:nth-child(1) span { transition-delay: 0ms; }
+  .split-lines.in .line:nth-child(2) span { transition-delay: 120ms; }
+  .split-lines.in .line:nth-child(3) span { transition-delay: 240ms; }
+  .split-lines.in .line span { transform: translateY(0); opacity: 1; }
+
+  .wipe-demo { position: relative; height: 280px; overflow: hidden; }
+  .wipe-image {
+    position: absolute; top: -15%; left: 0; width: 100%; height: 130%;
+    background-image: url('images/roji-gate-dusk.png');
+    background-size: cover;
+    background-position: center;
+    transform: translateY(calc(var(--parallax, 0) * 1%));
+  }
+  .wipe-slats { position: absolute; inset: 0; display: flex; }
+  .wipe-slats span { flex: 1; background: var(--color-canvas); transform: translateY(0); transition: transform 0.9s var(--motion-ease); }
+  #wipe-demo.in .wipe-slats span:nth-child(1) { transition-delay: 0ms; }
+  #wipe-demo.in .wipe-slats span:nth-child(2) { transition-delay: 70ms; }
+  #wipe-demo.in .wipe-slats span:nth-child(3) { transition-delay: 140ms; }
+  #wipe-demo.in .wipe-slats span:nth-child(4) { transition-delay: 210ms; }
+  #wipe-demo.in .wipe-slats span:nth-child(5) { transition-delay: 280ms; }
+  #wipe-demo.in .wipe-slats span { transform: translateY(-100%); }
+
+  .cursor-glow-demo {
+    height: 200px; background: var(--color-ink); position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cursor-glow-demo::before {
+    content: ""; position: absolute; width: 260px; height: 260px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(38,57,75,0.55), transparent 70%);
+    left: var(--x, 50%); top: var(--y, 50%);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .cursor-glow-demo:hover::before { opacity: 1; }
+  .cursor-glow-demo .cursor-glow-label { color: rgba(236,237,238,0.55); font-size: 13px; position: relative; z-index: 1; }
+
+  /* ---------- Do/Don't ---------- */
+  .dd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); }
+  .dd-list { list-style: none; margin: 0; padding: 0; }
+  .dd-list li { padding: var(--space-3) 0; border-top: 1px solid var(--color-hairline); font-size: 14px; line-height: 1.7; }
+  .dd-list li:first-child { border-top: none; }
+  .dd-title { font-family: var(--font-heading); font-size: 18px; margin-bottom: var(--space-4); }
+  .dd-title.do { color: var(--color-accent); }
+  .dd-title.dont { color: var(--color-ink-soft); }
+
+  footer { padding: var(--space-7) var(--space-6); text-align: center; font-size: 12px; color: var(--color-ink-soft); letter-spacing: 0.04em; }
+
+  @media (max-width: 640px) {
+    .surface-stack { grid-template-columns: repeat(2, 1fr); }
+    .triad { grid-template-columns: 1fr; }
+    .triad .stone:nth-child(2) { margin-top: 0; }
+    .dd-grid { grid-template-columns: 1fr; }
+    .type-row { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+    .study-grid { grid-template-columns: 1fr; }
+    .texture-row { grid-template-columns: 1fr; }
+    .anim-note-grid { grid-template-columns: 1fr; }
+    .pin-demo-sticky .pin-text { font-size: 22px; }
+    .split-lines .line span { font-size: 20px; }
+    .elem-anim-head { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" aria-hidden="true"><div class="scroll-progress-bar"></div></div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Design Board — 外構・エクステリア（庭師）コーポレートサイト</span>
+    <h1>露地を歩くように、<br>サイトを歩いてもらう。</h1>
+    <p class="lede">和モダン建築への解釈をもとに立てた中心メタファーと、色・書体・素材・動きのトークンを1枚のボードにまとめました。構成（ページ内のセクション順・グリッド）はまだ決めていません。</p>
+    <p class="metaphor">「客を茶室へ導く露地（茶庭）」— ナビゲーションは飛び石、ファーストビューはつくばい、CTAは燈籠、余白は歩く間そのもの。</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <span class="eyebrow">01 — Colors</span>
+    <h2 class="section-title">色</h2>
+    <p class="section-desc">Pinterestムードボードの伝統色（鼠色の濃淡＋藍の系譜）に名前を寄せた。色そのものは「純白・純黒禁止」ルールを優先し独自に調整。差し色（呉須色）は画面の3%以下。</p>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-fill" style="background:var(--color-canvas)"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">白鼠（Canvas）</div>
+          <div class="swatch-hex">#E8E9EB</div>
+          <div class="swatch-use">ページ基本背景。真っ白は使わない</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-fill" style="background:var(--color-plaster)"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">土壁（Plaster）</div>
+          <div class="swatch-hex">#DADCDE</div>
+          <div class="swatch-use">カード・強調ブロックの面。ノイズを乗せて使う</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-fill" style="background:var(--color-ink)"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">墨色（Ink）</div>
+          <div class="swatch-hex">#14161C</div>
+          <div class="swatch-use">本文色、および没入セクションの背景</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-fill" style="background:var(--color-accent)"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">呉須色（Accent）</div>
+          <div class="swatch-hex">#26394B</div>
+          <div class="swatch-use">唯一の差し色。CTAホバー・下線・フォーカスのみ</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-fill" style="background:var(--color-ink-soft)"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">藍鼠（Ink Soft）</div>
+          <div class="swatch-hex">#565A5E</div>
+          <div class="swatch-use">補助テキスト・キャプション</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-fill" style="background:var(--color-hairline)"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">銀鼠（Hairline）</div>
+          <div class="swatch-hex">#C7C9CB</div>
+          <div class="swatch-use">区切り線のみ</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">02 — Typography</span>
+    <h2 class="section-title">タイポグラフィ</h2>
+    <p class="section-desc">見出し=明朝（Shippori Mincho）／本文=ゴシック（Zen Kaku Gothic New）。階層はサイズと余白だけで作る。</p>
+
+    <div class="type-row">
+      <span class="type-label">Display / 64px</span>
+      <span class="type-sample display">静謐という、力。</span>
+    </div>
+    <div class="type-row">
+      <span class="type-label">H2 / 40px</span>
+      <span class="type-sample h2">庭は、余白でつくる。</span>
+    </div>
+    <div class="type-row">
+      <span class="type-label">H3 / 24px</span>
+      <span class="type-sample h3">石組みという設計思想</span>
+    </div>
+    <div class="type-row">
+      <span class="type-label">Body / 16px</span>
+      <span class="type-sample body">完璧に整えすぎないこと。侘びとは、不足の中に美を見出す境地であり、庭師の仕事は自然を支配することではなく、自然の良さを引き出すことにある。</span>
+    </div>
+    <div class="type-row">
+      <span class="type-label">Caption / 12px</span>
+      <span class="type-sample caption">Philosophy — 露地の掟</span>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">03 — Spacing</span>
+    <h2 class="section-title">余白スケール（4pxベース）</h2>
+    <p class="section-desc">セクション間隔は120px（Mobile 64px）— 一般的なLPより広く取り、「歩く間」を強調する。</p>
+    <div>
+      <div class="space-row"><span class="space-label">4px</span><span class="space-bar" style="width:4px"></span></div>
+      <div class="space-row"><span class="space-label">8px</span><span class="space-bar" style="width:8px"></span></div>
+      <div class="space-row"><span class="space-label">12px</span><span class="space-bar" style="width:12px"></span></div>
+      <div class="space-row"><span class="space-label">16px</span><span class="space-bar" style="width:16px"></span></div>
+      <div class="space-row"><span class="space-label">24px</span><span class="space-bar" style="width:24px"></span></div>
+      <div class="space-row"><span class="space-label">32px</span><span class="space-bar" style="width:32px"></span></div>
+      <div class="space-row"><span class="space-label">48px</span><span class="space-bar" style="width:48px"></span></div>
+      <div class="space-row"><span class="space-label">80px</span><span class="space-bar" style="width:80px"></span></div>
+      <div class="space-row"><span class="space-label">120px</span><span class="space-bar" style="width:120px"></span></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">04 — Shape &amp; Elevation</span>
+    <h2 class="section-title">形と影</h2>
+    <p class="section-desc">border-radiusは全要素0px。影は斜め45度の1種類のみ、主要写真にのみ使う。</p>
+    <div class="shape-grid">
+      <div class="shape-card">
+        <h4>radius 0px</h4>
+        <p>木組みの直線的な緊張感を守る境界線。全コンポーネント共通</p>
+      </div>
+      <div class="shape-card wrong">
+        <h4>radius 18px</h4>
+        <p>角を丸めた瞬間、和モダンの緊張感が崩れる — 使用しない</p>
+      </div>
+      <div class="shape-card shadow">
+        <h4>--shadow-1</h4>
+        <p>16px 20px 48px rgba(20,22,28,.16) — 障子越しの光。カード・ボタンには使わない</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">05 — Surfaces</span>
+    <h2 class="section-title">面の階層</h2>
+    <p class="section-desc">Canvas → Plaster → Fog → Ink の4段階。</p>
+    <div class="surface-stack">
+      <div class="surface canvas"><div class="name">Canvas</div><div class="hex">#E8E9EB</div></div>
+      <div class="surface plaster"><div class="name">Plaster</div><div class="hex">#DADCDE + noise</div></div>
+      <div class="surface fog"><div class="name">Fog</div><div class="hex">scrim only</div></div>
+      <div class="surface ink"><div class="name">Ink</div><div class="hex">#14161C</div></div>
+    </div>
+    <div class="aurora-demo">
+      <span class="aurora-label">Ink — Aurora variant</span>
+      <span class="aurora-note">墨色に呉須色を極薄く溶かした光。ページ全体で1箇所のみ（ヒーロー、または最も伝えたいセクション）。FLOAT／雲外宇韻からの着想</span>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">06 — Motion / シグネチャ①</span>
+    <h2 class="section-title">灯りホバー</h2>
+    <p class="section-desc">カーソルを乗せると、色相でなく光量が変わる。燈籠が灯るように。</p>
+    <div class="motion-demo">
+      <a href="#" class="cta">お問い合わせ</a>
+      <a href="#" class="cta">施工事例を見る</a>
+      <span class="motion-note">700ms・ease-out。塗りつぶしボタンにはしない — 燈籠は光るものであって主張するものではない</span>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">07 — シグネチャ②</span>
+    <h2 class="section-title">石組みの三点非対称配置</h2>
+    <p class="section-desc">3点セットで要素を並べる場面は、均等グリッドにせず高さと余白をずらす。三尊石組みの引用。</p>
+    <div class="triad">
+      <div class="stone" data-i="0"><h4>選定</h4><p>庭師が現地で樹木・石を選ぶところから始まる</p></div>
+      <div class="stone" data-i="1"><h4>設計</h4><p>余白と間を、図面ではなく現地の光で決める</p></div>
+      <div class="stone" data-i="2"><h4>施工</h4><p>完璧に整えすぎず、自然の良さを引き出す</p></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">08 — Imagery</span>
+    <h2 class="section-title">写真ディレクション（イメージ）</h2>
+    <p class="section-desc">逆光・半逆光、黄昏〜夜。コントラスト強め、彩度-10〜15%、フィルムグレイン5〜8%。人物は後ろ姿・手元のみ。</p>
+    <div class="imagery-plate">
+      <span class="caption">Backlit / Blue Hour / Grain 5–8% — 実写投入時の質感目標</span>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">09 — Gradient &amp; Texture Studies</span>
+    <h2 class="section-title">グラデーション・質感スタディ</h2>
+    <p class="section-desc">共有いただいた5点（FLOAT／グラデーションパレット／入れ子罫線の製本／「あたらしい日用品」／雲外宇韻）を起点に検討した表現案。どこで使うかはまだ決めていません。</p>
+
+    <div class="study-grid">
+      <div class="study-card">
+        <div class="study-fill moyaake"><span class="study-tag">霜白 / Moyaake</span></div>
+        <div class="study-meta">
+          <div class="study-name">霜白（しもじろ）</div>
+          <div class="study-note">FLOATの靄をベースにしたが、緑を前面に出すとルールに反するため彩度をさらに落とし「銀色の霧」寄りに調整した案。淡いセクション背景・区切りの候補</div>
+        </div>
+      </div>
+      <div class="study-card">
+        <div class="study-fill shiomi"><span class="study-tag">潮見 / Shiomi</span></div>
+        <div class="study-meta">
+          <div class="study-name">潮見（しおみ）</div>
+          <div class="study-note">SEA GRADIENTを呉須色の家系に翻訳した案。ルール上の逸脱がなく最も採用しやすい。カード背景やセクション区切りの候補</div>
+        </div>
+      </div>
+      <div class="study-card excluded">
+        <div class="study-fill"><span class="study-tag">見送り</span></div>
+        <div class="study-meta">
+          <div class="study-name">SAHARA GRADIENT（不採用）</div>
+          <div class="study-note">暖色主体のグラデーションは「暖色を避ける」ルールと正面から矛盾するため、案として作らずここに記録のみ残した</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="study-caption">Aurora（夜霧）は §05 Surfaces に実装済み。上記2案とあわせて3種のグラデーション候補になる。</p>
+
+    <div class="texture-row">
+      <div>
+        <div class="emboss-demo"><div class="emboss-nest"></div></div>
+        <div class="study-meta">
+          <div class="study-name">入れ子の罫線（エンボス）</div>
+          <div class="study-note">グレー製本の箔押しから。暗いカードの角や余白に、ごく薄い線として1箇所だけ使う候補</div>
+        </div>
+      </div>
+      <div>
+        <div class="objet-demo"><div class="objet-stone"></div></div>
+        <div class="study-meta">
+          <div class="study-name">余白に置く、ひとつの物</div>
+          <div class="study-note">「あたらしい日用品」の丸石から。土壁の面に石をひとつだけ、非対称に置く構成。実績写真のキャプションカード等での使用を想定</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">10 — Animation Patterns</span>
+    <h2 class="section-title">アニメーションのパターン</h2>
+    <p class="section-desc">krepling.com を解剖して確認した構成：Next.js + Lenis（スムーズスクロール）+ 出現アニメ1パターン。このページ自体、今すでにLenisで動いています — スクロールの重さ・慣性を触って確認してください。</p>
+
+    <div class="anim-note-grid">
+      <div class="anim-note-card">
+        <h4>スムーズスクロール（Lenis）</h4>
+        <p>このページ全体に適用済み。約4KB、業界標準。<code>prefers-reduced-motion</code>時は初期化しない。「気持ちいい」の大部分はこれだけで作られる</p>
+      </div>
+      <div class="anim-note-card">
+        <h4>出現アニメ（1パターン主義）</h4>
+        <p>ここまでの全セクションで使用中のfade-up。<code>IntersectionObserver</code> + <code>opacity/transform</code>のみ。距離16〜32px、0.5〜0.7s、1回だけ発火。§05のTriadはこれに60〜90msのstaggerを足したもの</p>
+      </div>
+    </div>
+
+    <p class="pin-demo-label">スクロール連動のピン留め＋ブラー（krepling風）— 下の枠内をスクロールしてください</p>
+    <div class="pin-demo-box">
+      <div class="pin-demo-inner">
+        <div class="pin-demo-sticky">
+          <span class="pin-text">静けさは、<br>速さの中にある。</span>
+          <span class="pin-hint">Scroll inside ↓</span>
+        </div>
+      </div>
+      <div class="pin-demo-fill"><span>次のセクションが現れる</span></div>
+    </div>
+    <p class="study-caption">position: sticky + スクロール量に応じた1つの変数（--p）だけでopacity・blur・scaleを駆動。GSAPなどの追加ライブラリなしで実装できる。使うならヒーロー1箇所のみ — Auroraグラデーションと同じ「希少性」の原則</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">11 — Element Animations</span>
+    <h2 class="section-title">要素のアニメーション</h2>
+    <p class="section-desc">セクション単位の出現アニメとは別に、要素単位で使える表現。すべてメタファーに紐づく理由を持たせた。ページ最上部の細い線は、このページ自体のスクロール進捗（露地を歩いた距離）です。</p>
+
+    <div class="elem-anim-block">
+      <div class="elem-anim-head">
+        <h4 class="study-name">テキストの行分解</h4>
+        <button class="replay-btn" type="button" data-replay="split-lines-demo">もう一度見る（デモ用）</button>
+      </div>
+      <p class="study-note">露地を一歩ずつ歩く速度そのもの。ヒーローの見出しなど1箇所のみで使う</p>
+      <div class="text-reveal-demo">
+        <h3 class="split-lines" id="split-lines-demo">
+          <span class="line"><span>静けさは、</span></span>
+          <span class="line"><span>一歩ずつ、</span></span>
+          <span class="line"><span>積み重なる。</span></span>
+        </h3>
+      </div>
+    </div>
+
+    <div class="elem-anim-block">
+      <div class="elem-anim-head">
+        <h4 class="study-name">画像のスラットワイプ＋内部パララックス</h4>
+        <button class="replay-btn" type="button" data-replay="wipe-demo">もう一度見る（デモ用）</button>
+      </div>
+      <p class="study-note">垣根の「見え隠れ」をそのまま実装したエントランス（縦の帯が独立して開く）に、kei-inc.jpのFeatured Projectsで確認した内部パララックスを重ねた。画像を親要素より縦130%大きくし、ページのスクロール量に応じて`translateY`— 写真の中が微妙にスクロールされる、あの奥行き。ページを上下にスクロールしてみてください</p>
+      <div class="wipe-demo" id="wipe-demo">
+        <div class="wipe-image" data-parallax></div>
+        <div class="wipe-slats"><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+
+    <div class="elem-anim-block">
+      <div class="elem-anim-head">
+        <h4 class="study-name">カーソル追従の灯り</h4>
+      </div>
+      <p class="study-note">シグネチャ①（灯りホバー）の拡張。色は呉須色のみ、Auroraの緑は使わない。押し付けがましければ不採用でよい候補</p>
+      <div class="cursor-glow-demo" id="cursor-glow-demo">
+        <span class="cursor-glow-label">カーソルを動かしてください</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">12 — Do's &amp; Don'ts</span>
+    <h2 class="section-title">やること・やらないこと</h2>
+    <div class="dd-grid">
+      <div>
+        <div class="dd-title do">Do</div>
+        <ul class="dd-list">
+          <li>余白を「歩く間」として設計する</li>
+          <li>差し色は画面の3%以下に絞る</li>
+          <li>写真は逆光・半逆光を選ぶ</li>
+          <li>グリッドに1箇所、意図的な非対称を残す</li>
+          <li>テクスチャで素材の手触りを語る</li>
+        </ul>
+      </div>
+      <div>
+        <div class="dd-title dont">Don't</div>
+        <ul class="dd-list">
+          <li>緑を使わない（同業他社との差別化のため）</li>
+          <li>純白・純黒を使わない</li>
+          <li>角を丸めない</li>
+          <li>塗りつぶしの派手なCTAを置かない</li>
+          <li>出現アニメと無関係にスクロール演出を増やさない（Lenisの慣性は土台、fade-upは1パターン、ピン留め演出はヒーロー1箇所まで — §10参照）</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>Design Board v1 — 構成（レイアウト）は次フェーズで確定します</footer>
+
+<script src="https://unpkg.com/lenis@1/dist/lenis.min.js"></script>
+<script>
+  const targets = document.querySelectorAll('section, .hero');
+  targets.forEach(el => el.classList.add('reveal'));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  targets.forEach(el => io.observe(el));
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReducedMotion && window.Lenis) {
+    window.__lenis = new Lenis({ autoRaf: true });
+  }
+
+  const pinBox = document.querySelector('.pin-demo-box');
+  const pinInner = document.querySelector('.pin-demo-inner');
+  const pinSticky = document.querySelector('.pin-demo-sticky');
+  if (pinBox && pinInner && pinSticky) {
+    if (prefersReducedMotion) {
+      pinSticky.style.setProperty('--p', 0);
+    } else {
+      const maxP = Math.max(pinInner.offsetHeight - pinSticky.offsetHeight, 1);
+      const onPinScroll = () => {
+        const p = Math.min(Math.max(pinBox.scrollTop / maxP, 0), 1);
+        pinSticky.style.setProperty('--p', p.toFixed(3));
+      };
+      pinBox.addEventListener('scroll', onPinScroll, { passive: true });
+      onPinScroll();
+    }
+  }
+
+  const progressBar = document.querySelector('.scroll-progress-bar');
+  if (progressBar) {
+    const updateProgress = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? window.scrollY / max : 0;
+      progressBar.style.setProperty('--sp', p.toFixed(4));
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  }
+
+  function triggerReplay(el) {
+    if (!el) return;
+    el.classList.remove('in');
+    void el.offsetWidth;
+    el.classList.add('in');
+  }
+
+  const replayTargets = ['split-lines-demo', 'wipe-demo'].map(id => document.getElementById(id)).filter(Boolean);
+  if (!prefersReducedMotion) {
+    const elemIo = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          elemIo.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    replayTargets.forEach(el => elemIo.observe(el));
+  } else {
+    replayTargets.forEach(el => el.classList.add('in'));
+  }
+
+  document.querySelectorAll('.replay-btn').forEach(btn => {
+    btn.addEventListener('click', () => triggerReplay(document.getElementById(btn.dataset.replay)));
+  });
+
+  const cursorGlow = document.getElementById('cursor-glow-demo');
+  if (cursorGlow && !prefersReducedMotion) {
+    cursorGlow.addEventListener('mousemove', (e) => {
+      const rect = cursorGlow.getBoundingClientRect();
+      cursorGlow.style.setProperty('--x', `${e.clientX - rect.left}px`);
+      cursorGlow.style.setProperty('--y', `${e.clientY - rect.top}px`);
+    });
+  }
+
+  const parallaxEls = document.querySelectorAll('[data-parallax]');
+  if (parallaxEls.length && !prefersReducedMotion) {
+    const updateParallax = () => {
+      const vh = window.innerHeight;
+      parallaxEls.forEach(el => {
+        const rect = el.parentElement.getBoundingClientRect();
+        const centerProgress = (rect.top + rect.height / 2) / vh;
+        const clamped = Math.min(Math.max(centerProgress, 0), 1);
+        const shift = (clamped - 0.5) * -16;
+        el.style.setProperty('--parallax', shift.toFixed(2));
+      });
+    };
+    window.addEventListener('scroll', updateParallax, { passive: true });
+    updateParallax();
+  }
+</script>
+
+</body>
+</html>
