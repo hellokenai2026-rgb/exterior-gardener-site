@@ -58,32 +58,26 @@
   /* ---------- Nav ---------- */
   .site-nav {
     position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
-    padding: var(--space-5) var(--space-6);
+    padding: var(--space-6);
     display: flex; align-items: center; justify-content: space-between;
     color: var(--color-on-ink);
+    mix-blend-mode: difference;
   }
   .site-nav .logo {
-    font-family: var(--font-heading); font-size: 20px; text-decoration: none;
+    font-family: var(--font-heading); font-size: 19px; text-decoration: none;
   }
-  .site-nav .nav-links {
-    display: flex; gap: var(--space-6); list-style: none; margin: 0; padding: 0;
+  .site-nav .nav-contact {
+    font-size: 12px; letter-spacing: 0.06em; text-decoration: none;
+    border-bottom: 1px solid rgba(236,237,238,0.5);
+    padding-bottom: 2px;
+    transition: border-color var(--motion-duration) var(--motion-ease);
   }
-  .site-nav .nav-links a {
-    font-size: 13px; letter-spacing: 0.04em; text-decoration: none;
-    opacity: 0.85; transition: opacity var(--motion-duration) var(--motion-ease);
-  }
-  .site-nav .nav-links a:hover { opacity: 1; }
-  .site-nav .nav-links { display: none; }
-  @media (min-width: 860px) {
-    .site-nav .nav-links { display: flex; }
-  }
+  .site-nav .nav-contact:hover { border-color: transparent; }
 
   /* ---------- Hero ---------- */
   .hero {
     position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
+    height: 100vh;
     overflow: hidden;
   }
   .hero-media { position: absolute; inset: 0; overflow: hidden; }
@@ -94,100 +88,99 @@
   }
   .hero-scrim {
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(13,15,20,0.55) 0%, rgba(13,15,20,0.35) 45%, rgba(13,15,20,0.75) 100%);
+    background:
+      linear-gradient(0deg, rgba(6,7,9,0.88) 0%, rgba(6,7,9,0.5) 30%, transparent 55%),
+      linear-gradient(100deg, rgba(6,7,9,0.35) 0%, transparent 40%);
   }
-  .hero-scrim::after {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: var(--color-highlight);
+
+  .hero-eyebrow-vertical {
+    position: absolute;
+    top: var(--space-9);
+    right: var(--space-6);
+    z-index: 2;
+    writing-mode: vertical-rl;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: rgba(236,237,238,0.55);
   }
 
   .hero-content {
-    position: relative; z-index: 2;
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 var(--space-6);
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    z-index: 2;
+    padding: 0 var(--space-6) 96px;
     color: var(--color-on-ink);
   }
-  .hero-content .eyebrow {
-    display: block;
-    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: rgba(236,237,238,0.65);
-    margin-bottom: var(--space-5);
-  }
   .hero-content h1 {
-    font-size: clamp(32px, 5.5vw, 60px);
-    line-height: 1.5;
+    font-size: clamp(44px, 9vw, 108px);
+    line-height: 1.15;
+    max-width: 16em;
   }
   .split-lines .line { display: block; overflow: hidden; }
   .split-lines .line span {
     display: inline-block;
     transform: translateY(110%);
     opacity: 0;
-    transition: transform 0.9s var(--motion-ease), opacity 0.9s var(--motion-ease);
+    transition: transform 1s var(--motion-ease), opacity 1s var(--motion-ease);
   }
-  .split-lines.in .line:nth-child(1) span { transition-delay: 100ms; }
-  .split-lines.in .line:nth-child(2) span { transition-delay: 230ms; }
+  .split-lines.in .line:nth-child(1) span { transition-delay: 200ms; }
+  .split-lines.in .line:nth-child(2) span { transition-delay: 360ms; }
   .split-lines.in .line span { transform: translateY(0); opacity: 1; }
 
   .hero-lede {
-    max-width: 32em;
+    max-width: 24em;
     margin: var(--space-6) 0 0 0;
-    font-size: 16px;
-    color: rgba(236,237,238,0.8);
+    padding-left: var(--space-6);
+    border-left: 1px solid rgba(236,237,238,0.3);
+    font-size: 14px;
+    line-height: 1.9;
+    color: rgba(236,237,238,0.75);
     opacity: 0;
-    transform: translateY(12px);
-    transition: opacity var(--motion-duration) var(--motion-ease), transform var(--motion-duration) var(--motion-ease);
-    transition-delay: 500ms;
+    transform: translateY(10px);
+    transition: opacity var(--motion-duration) var(--motion-ease) 650ms, transform var(--motion-duration) var(--motion-ease) 650ms;
   }
   .hero-lede.in { opacity: 1; transform: translateY(0); }
+
+  .hero-foot {
+    position: absolute; left: 0; right: 0; bottom: var(--space-6);
+    z-index: 2;
+    padding: 0 var(--space-6);
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
 
   .cta {
     position: relative;
     display: inline-block;
-    margin-top: var(--space-9);
-    padding: 14px 36px;
-    border: 1px solid rgba(236,237,238,0.4);
+    padding: 4px 0;
     font-family: var(--font-body);
     font-size: 12px;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--color-on-ink);
     text-decoration: none;
-    transition: color var(--motion-duration) var(--motion-ease), border-color var(--motion-duration) var(--motion-ease);
+    border-bottom: 1px solid rgba(236,237,238,0.5);
+    transition: border-color var(--motion-duration) var(--motion-ease), padding-right var(--motion-duration) var(--motion-ease);
     opacity: 0;
-    transform: translateY(12px);
-    transition-delay: 700ms, 700ms;
+    transform: translateY(10px);
   }
-  .cta.in { opacity: 1; transform: translateY(0); transition: opacity var(--motion-duration) var(--motion-ease) 700ms, transform var(--motion-duration) var(--motion-ease) 700ms, color var(--motion-duration) var(--motion-ease), border-color var(--motion-duration) var(--motion-ease); }
-  .cta::before {
-    content: "";
-    position: absolute;
-    inset: -24px;
-    background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity var(--motion-duration) var(--motion-ease);
-    pointer-events: none;
-    z-index: -1;
-  }
-  .cta:hover { border-color: #ffffff; }
-  .cta:hover::before { opacity: 0.35; }
+  .cta.in { opacity: 1; transform: translateY(0); transition: opacity var(--motion-duration) var(--motion-ease) 850ms, transform var(--motion-duration) var(--motion-ease) 850ms, border-color var(--motion-duration) var(--motion-ease); }
+  .cta:hover { border-color: var(--color-on-ink); padding-right: 8px; }
 
   .scroll-cue {
-    position: absolute; bottom: var(--space-6); left: 50%; transform: translateX(-50%);
-    z-index: 2;
-    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: rgba(236,237,238,0.6);
-    display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(236,237,238,0.55);
+    display: flex; align-items: center; gap: var(--space-4);
   }
-  .scroll-cue::after {
+  .scroll-cue::before {
     content: "";
-    width: 1px; height: 32px;
+    display: block;
+    width: 32px; height: 1px;
     background: rgba(236,237,238,0.4);
   }
 
   @media (max-width: 640px) {
-    .hero-content { padding: 0 var(--space-5); }
-    .cta { margin-top: var(--space-6); }
+    .hero-content { padding: 0 var(--space-5) 120px; }
+    .hero-eyebrow-vertical { top: var(--space-6); }
+    .hero-foot { padding: 0 var(--space-5); flex-direction: column; align-items: flex-start; gap: var(--space-5); }
   }
 </style>
 </head>
@@ -197,13 +190,7 @@
 
 <header class="site-nav">
   <a class="logo" href="#">［屋号］</a>
-  <ul class="nav-links">
-    <li><a href="#concept">Concept</a></li>
-    <li><a href="#works">Works</a></li>
-    <li><a href="#service">Service</a></li>
-    <li><a href="#company">Company</a></li>
-  </ul>
-  <a class="cta" style="margin-top:0; padding:10px 24px; opacity:1; transform:none; transition:none;" href="#contact">お問い合わせ</a>
+  <a class="nav-contact" href="#contact">お問い合わせ</a>
 </header>
 
 <section class="hero">
@@ -211,16 +198,18 @@
     <img class="hero-photo" src="images/roji-gate-dusk.png" alt="露地の飛び石と、灯りの灯る門" data-parallax>
     <div class="hero-scrim"></div>
   </div>
+  <span class="hero-eyebrow-vertical">EXTERIOR / GARDEN DESIGN</span>
   <div class="hero-content">
-    <span class="eyebrow">Exterior / Garden Design</span>
     <h1 class="split-lines" id="hero-h1">
       <span class="line"><span>庭に、</span></span>
       <span class="line"><span>静けさを設計する。</span></span>
     </h1>
-    <p class="hero-lede" id="hero-lede">外構・エクステリア工事を、完璧に整えすぎない庭という思想で。［屋号］が、住まいの静けさをかたちにします。</p>
-    <a class="cta" id="hero-cta" href="#contact">お問い合わせ</a>
+    <p class="hero-lede" id="hero-lede">外構・エクステリア工事を、完璧に整えすぎない庭という思想で。<br>［屋号］が、住まいの静けさをかたちにします。</p>
   </div>
-  <span class="scroll-cue">Scroll</span>
+  <div class="hero-foot">
+    <a class="cta" id="hero-cta" href="#contact">お問い合わせ</a>
+    <span class="scroll-cue">Scroll</span>
+  </div>
 </section>
 
 <script src="https://unpkg.com/lenis@1/dist/lenis.min.js"></script>
