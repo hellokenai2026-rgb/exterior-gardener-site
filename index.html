@@ -498,37 +498,43 @@
   // Value: one fixed photo "window" that scrubs to the next photo in direct
   // proportion to scroll position (verified against returntonature.jp: its
   // mask-position is a continuous function of scrollY, not a fixed-duration
-  // transition triggered once a panel enters view). Anchored to the shared
-  // edge between panel(i) and panel(i+1) — since that edge is exactly where
-  // panel(i+1)'s text starts entering the screen, tying the photo swap to it
-  // keeps the sticky photo in sync with whichever panel is actually readable
-  // (an earlier version measured each panel's own pass-through independently
-  // and let the photo race ahead of the text before the next panel was even
-  // on screen).
+  // transition triggered once a panel enters view). No CSS transition and no
+  // triggered/discrete state — every scroll tick recomputes a single
+  // continuous progress value (0 .. photoCount-1) from how much of
+  // #value-list's own scrollable range has been consumed, then sets each
+  // photo/panel's mask-position / opacity directly from its distance to
+  // that progress value. rAF-throttled so it runs at most once per frame.
+  const valueList = document.getElementById('value-list');
   const valuePanels = document.querySelectorAll('.value-panel');
   const valuePhotos = document.querySelectorAll('.value-photo');
-  if (valuePanels.length && valuePhotos.length) {
-    const clamp01 = (n) => Math.min(Math.max(n, 0), 1);
+  if (valueList && valuePanels.length && valuePhotos.length) {
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+    const count = valuePhotos.length;
     const updateValueScrub = () => {
+      const rect = valueList.getBoundingClientRect();
       const vh = window.innerHeight;
-      const center = vh / 2;
-      const zoneHalf = vh * 0.35;
-      let activeIndex = 0;
-      for (let i = 0; i < valuePanels.length - 1; i++) {
-        const boundaryY = valuePanels[i].getBoundingClientRect().bottom;
-        const raw = (center + zoneHalf - boundaryY) / (zoneHalf * 2);
-        activeIndex += clamp01(raw);
-      }
+      const scrollableRange = valueList.offsetHeight - vh;
+      const consumed = clamp(-rect.top, 0, scrollableRange);
+      const ratio = scrollableRange > 0 ? consumed / scrollableRange : 0;
+      const progress = ratio * (count - 1);
+
       valuePanels.forEach((panel, i) => {
-        const progress = clamp01(1 - Math.abs(activeIndex - i));
-        panel.style.setProperty('--value-panel-opacity', (0.4 + 0.6 * progress).toFixed(3));
+        const distance = clamp(1 - Math.abs(progress - i), 0, 1);
+        panel.style.setProperty('--value-panel-opacity', (0.4 + 0.6 * distance).toFixed(3));
       });
       valuePhotos.forEach((photo, i) => {
-        const progress = clamp01(1 - Math.abs(activeIndex - i));
-        photo.style.setProperty('--value-mask-y', (100 - progress * 100).toFixed(2) + '%');
+        const distance = clamp(1 - Math.abs(progress - i), 0, 1);
+        photo.style.setProperty('--value-mask-y', (100 - distance * 100).toFixed(2) + '%');
       });
     };
-    window.addEventListener('scroll', updateValueScrub, { passive: true });
+    let ticking = false;
+    const onValueScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { updateValueScrub(); ticking = false; });
+    };
+    window.addEventListener('scroll', onValueScroll, { passive: true });
+    window.addEventListener('resize', onValueScroll);
     updateValueScrub();
   }
 
