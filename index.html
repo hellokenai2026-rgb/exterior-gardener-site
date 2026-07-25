@@ -298,24 +298,19 @@
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000'%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='55'/%3E%3C/filter%3E%3Crect width='1000' height='1000' fill='black'/%3E%3Cpath d='M-50,420 C150,500 300,340 480,420 C650,500 780,360 1050,430 L1050,-50 L-50,-50 Z' fill='white' filter='url(%23b)'/%3E%3C/svg%3E");
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-size: 100% 400%; mask-size: 100% 400%;
-    -webkit-mask-position: 0% 100%; mask-position: 0% 100%;
+    /* driven every scroll tick by JS, not a CSS transition — the wipe must
+       track scroll position 1:1 (returntonature.jp scrubs it the same way),
+       not snap to a fixed-duration animation once triggered */
+    -webkit-mask-position: 0% var(--value-mask-y, 100%);
+    mask-position: 0% var(--value-mask-y, 100%);
     -webkit-mask-mode: luminance; mask-mode: luminance;
-    transition: -webkit-mask-position 1.6s var(--motion-ease), mask-position 1.6s var(--motion-ease);
-  }
-  .value-photo.is-active {
-    -webkit-mask-position: 0% 0%; mask-position: 0% 0%;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .value-photo { transition: none; }
   }
 
   .value-panels { margin-top: var(--space-7); }
   .value-panel {
     padding: var(--space-7) var(--space-6);
-    opacity: 0.4;
-    transition: opacity 0.6s var(--motion-ease);
+    opacity: var(--value-panel-opacity, 0.4);
   }
-  .value-panel.is-active { opacity: 1; }
   .value-eyebrow {
     display: block;
     font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -500,24 +495,41 @@
     updateParallax();
   }
 
-  // Value: one fixed photo "window" (mask-wipe, same technique everywhere —
-  // the first reveal and every later photo change are the same mechanism,
-  // not a special-cased entrance plus a separate crossfade). Driven by which
-  // text panel is centered in the viewport, so it tracks Lenis's smoothed
-  // scroll position rather than raw wheel events.
+  // Value: one fixed photo "window" that scrubs to the next photo in direct
+  // proportion to scroll position (verified against returntonature.jp: its
+  // mask-position is a continuous function of scrollY, not a fixed-duration
+  // transition triggered once a panel enters view). Anchored to the shared
+  // edge between panel(i) and panel(i+1) — since that edge is exactly where
+  // panel(i+1)'s text starts entering the screen, tying the photo swap to it
+  // keeps the sticky photo in sync with whichever panel is actually readable
+  // (an earlier version measured each panel's own pass-through independently
+  // and let the photo race ahead of the text before the next panel was even
+  // on screen).
   const valuePanels = document.querySelectorAll('.value-panel');
   const valuePhotos = document.querySelectorAll('.value-photo');
   if (valuePanels.length && valuePhotos.length) {
-    const setActiveValue = (value) => {
-      valuePanels.forEach(p => p.classList.toggle('is-active', p.dataset.value === value));
-      valuePhotos.forEach(p => p.classList.toggle('is-active', p.dataset.value === value));
-    };
-    const panelIo = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) setActiveValue(entry.target.dataset.value);
+    const clamp01 = (n) => Math.min(Math.max(n, 0), 1);
+    const updateValueScrub = () => {
+      const vh = window.innerHeight;
+      const center = vh / 2;
+      const zoneHalf = vh * 0.35;
+      let activeIndex = 0;
+      for (let i = 0; i < valuePanels.length - 1; i++) {
+        const boundaryY = valuePanels[i].getBoundingClientRect().bottom;
+        const raw = (center + zoneHalf - boundaryY) / (zoneHalf * 2);
+        activeIndex += clamp01(raw);
+      }
+      valuePanels.forEach((panel, i) => {
+        const progress = clamp01(1 - Math.abs(activeIndex - i));
+        panel.style.setProperty('--value-panel-opacity', (0.4 + 0.6 * progress).toFixed(3));
       });
-    }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
-    valuePanels.forEach(p => panelIo.observe(p));
+      valuePhotos.forEach((photo, i) => {
+        const progress = clamp01(1 - Math.abs(activeIndex - i));
+        photo.style.setProperty('--value-mask-y', (100 - progress * 100).toFixed(2) + '%');
+      });
+    };
+    window.addEventListener('scroll', updateValueScrub, { passive: true });
+    updateValueScrub();
   }
 
   // General scroll reveal (base 1-pattern, reused by every section after the hero)
