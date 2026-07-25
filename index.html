@@ -300,11 +300,11 @@
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000'%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='55'/%3E%3C/filter%3E%3Crect width='1000' height='1000' fill='black'/%3E%3Cpath d='M-50,420 C150,500 300,340 480,420 C650,500 780,360 1050,430 L1050,-50 L-50,-50 Z' fill='white' filter='url(%23b)'/%3E%3C/svg%3E");
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-size: 100% 400%; mask-size: 100% 400%;
-    -webkit-mask-position: 0% 100%; mask-position: 0% 100%;
+    -webkit-mask-position: 0% 0%; mask-position: 0% 0%;
     transition: -webkit-mask-position 1.6s var(--motion-ease), mask-position 1.6s var(--motion-ease);
   }
   .value-block.in .value-mask {
-    -webkit-mask-position: 0% 0%; mask-position: 0% 0%;
+    -webkit-mask-position: 0% 100%; mask-position: 0% 100%;
   }
   .value-text { margin-top: var(--space-6); max-width: 34em; }
   .value-eyebrow {
