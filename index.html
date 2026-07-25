@@ -292,7 +292,7 @@
     min-height: 340px;
     overflow: hidden;
   }
-  .value-plate { position: absolute; inset: 0; }
+  .value-plate { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .value-mask {
     position: absolute; inset: 0; z-index: 1;
     background-color: var(--color-plaster);
@@ -325,16 +325,6 @@
     color: var(--color-ink-soft);
     margin: var(--space-4) 0 0 0;
   }
-
-  /* Placeholder plates — swap for real project photography */
-  .value-plate::after {
-    content: "";
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-  }
-  .value-plate.is-1 { background: radial-gradient(ellipse at 70% 25%, rgba(86,140,130,0.10), transparent 55%), linear-gradient(200deg, #0c1016 0%, #1c222b 45%, #2a3440 100%); }
-  .value-plate.is-2 { background: radial-gradient(ellipse at 30% 70%, rgba(38,57,75,0.35), transparent 55%), linear-gradient(160deg, #14161c 0%, #1b2530 55%, #26394b 100%); }
-  .value-plate.is-3 { background: radial-gradient(ellipse at 60% 30%, rgba(199,201,203,0.10), transparent 55%), linear-gradient(190deg, #0d0f13 0%, #191d24 50%, #22272f 100%); }
 
   @media (max-width: 860px) {
     .concept-body { margin-left: 0; margin-top: var(--space-7); }
@@ -408,7 +398,7 @@
   <div class="value-list">
     <div class="value-block reveal" id="value-1">
       <div class="value-media">
-        <div class="value-plate is-1"></div>
+        <img class="value-plate" src="images/value-1.png" alt="縁側から見る枯山水の庭、灯りの灯る室内" loading="lazy">
         <div class="value-mask"></div>
       </div>
       <div class="value-text">
@@ -420,7 +410,7 @@
 
     <div class="value-block reveal" id="value-2">
       <div class="value-media">
-        <div class="value-plate is-2"></div>
+        <img class="value-plate" src="images/value-2.png" alt="石垣と木製の門、隙間から漏れる灯り" loading="lazy">
         <div class="value-mask"></div>
       </div>
       <div class="value-text">
@@ -432,7 +422,7 @@
 
     <div class="value-block reveal" id="value-3">
       <div class="value-media">
-        <div class="value-plate is-3"></div>
+        <img class="value-plate" src="images/value-3.png" alt="松の剪定を行う職人の手元" loading="lazy">
         <div class="value-mask"></div>
       </div>
       <div class="value-text">
