@@ -24,6 +24,8 @@
     --font-heading: "Shippori Mincho", serif;
     --font-body: "Zen Kaku Gothic New", sans-serif;
 
+    --space-2: 8px;
+    --space-3: 12px;
     --space-4: 16px;
     --space-5: 24px;
     --space-6: 32px;
@@ -210,17 +212,18 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    font-family: var(--font-heading);
-    font-size: clamp(280px, 42vw, 560px);
-    line-height: 1;
-    color: var(--color-ink);
+    width: clamp(220px, 30vw, 420px);
+    height: clamp(220px, 30vw, 420px);
+    background-image: url('images/logo.png');
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: auto clamp(220px, 30vw, 420px);
     pointer-events: none;
     user-select: none;
-    white-space: nowrap;
     opacity: 0;
     transition: opacity 2.4s var(--motion-ease);
   }
-  .concept-mark.in { opacity: 0.04; }
+  .concept-mark.in { opacity: 0.08; }
   .concept-inner {
     position: relative;
     max-width: var(--max-width);
@@ -253,8 +256,71 @@
     transition-delay: 260ms;
   }
 
+  /* ---------- Service ---------- */
+  .service {
+    position: relative;
+    background-color: var(--color-plaster);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+    color: var(--color-ink);
+    padding: var(--space-9) var(--space-6);
+  }
+  .service-inner { max-width: var(--max-width); margin: 0 auto; }
+  .service-eyebrow {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+  .service-headline {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 40px);
+    margin: var(--space-5) 0 0 0;
+  }
+  .service-list {
+    list-style: none;
+    margin: var(--space-8) 0 0 0;
+    padding: 0;
+    border-top: 1px solid var(--color-hairline);
+  }
+  .service-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-6);
+    padding: var(--space-6) 0;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .service-row:nth-child(1) { transition-delay: 0ms; }
+  .service-row:nth-child(2) { transition-delay: 80ms; }
+  .service-row:nth-child(3) { transition-delay: 160ms; }
+  .service-row:nth-child(4) { transition-delay: 240ms; }
+  .service-row:nth-child(5) { transition-delay: 320ms; }
+  .service-num {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    color: var(--color-ink-soft);
+    width: 1.5em;
+    flex-shrink: 0;
+  }
+  .service-name {
+    font-family: var(--font-heading);
+    font-size: clamp(19px, 2vw, 24px);
+    width: 9em;
+    flex-shrink: 0;
+  }
+  .service-desc {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--color-ink-soft);
+    max-width: 32em;
+  }
+
   @media (max-width: 860px) {
     .concept-body { margin-left: 0; margin-top: var(--space-7); }
+    .service-row { flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
+    .service-name { width: auto; }
+    .service-desc { max-width: none; flex-basis: 100%; padding-left: calc(1.5em + var(--space-6)); }
   }
 
   @media (max-width: 640px) {
@@ -296,7 +362,7 @@
 </section>
 
 <section class="concept" id="concept">
-  <span class="concept-mark reveal">間</span>
+  <span class="concept-mark reveal" aria-hidden="true"></span>
   <div class="concept-inner">
     <span class="concept-eyebrow reveal">01 — Concept</span>
     <h2 class="concept-headline reveal">完成させないことを、<br>設計する。</h2>
@@ -310,6 +376,40 @@
       宍倉造園は、庭を"完成させる"のではなく、<br>
       住まいと共に育っていく余白を、設計します。
     </p>
+  </div>
+</section>
+
+<section class="service" id="service">
+  <div class="service-inner">
+    <span class="service-eyebrow reveal">02 — Service</span>
+    <h2 class="service-headline reveal">できること。</h2>
+    <ul class="service-list">
+      <li class="service-row reveal">
+        <span class="service-num">一</span>
+        <span class="service-name">外構工事</span>
+        <span class="service-desc">新築・リフォームを問わず、住まいの「顔」となる外まわりを設計します。</span>
+      </li>
+      <li class="service-row reveal">
+        <span class="service-num">二</span>
+        <span class="service-name">庭園設計・施工</span>
+        <span class="service-desc">和モダンの庭を、既存の敷地・建築に合わせて一から作ります。</span>
+      </li>
+      <li class="service-row reveal">
+        <span class="service-num">三</span>
+        <span class="service-name">植栽・剪定</span>
+        <span class="service-desc">木々の育ち方を見ながら、経年で美しくなる庭を維持します。</span>
+      </li>
+      <li class="service-row reveal">
+        <span class="service-num">四</span>
+        <span class="service-name">石材・エクステリア</span>
+        <span class="service-desc">塀・アプローチ・門まわりなど、庭と建築をつなぐ構造物を手がけます。</span>
+      </li>
+      <li class="service-row reveal">
+        <span class="service-num">五</span>
+        <span class="service-name">メンテナンス</span>
+        <span class="service-desc">竣工後も、庭は変わり続けます。季節ごとのお手入れも承ります。</span>
+      </li>
+    </ul>
   </div>
 </section>
 
