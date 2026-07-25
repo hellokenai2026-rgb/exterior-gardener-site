@@ -256,15 +256,15 @@
     transition-delay: 260ms;
   }
 
-  /* ---------- Service ---------- */
+  /* ---------- Service (Value-style, mask-wipe reveal) ---------- */
   .service {
     position: relative;
     background-color: var(--color-plaster);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
     color: var(--color-ink);
-    padding: var(--space-9) var(--space-6);
+    padding: var(--space-9) 0;
   }
-  .service-inner { max-width: var(--max-width); margin: 0 auto; }
+  .service-inner { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-6); }
   .service-eyebrow {
     display: block;
     font-size: 12px;
@@ -278,49 +278,67 @@
     font-size: clamp(26px, 4vw, 40px);
     margin: var(--space-5) 0 0 0;
   }
-  .service-list {
-    list-style: none;
-    margin: var(--space-8) 0 0 0;
-    padding: 0;
-    border-top: 1px solid var(--color-hairline);
+
+  .value-list { margin-top: var(--space-9); }
+  .value-block {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-6);
   }
-  .service-row {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-6);
-    padding: var(--space-6) 0;
-    border-bottom: 1px solid var(--color-hairline);
+  .value-block + .value-block { margin-top: var(--space-9); }
+  .value-media {
+    position: relative;
+    height: 56vh;
+    min-height: 340px;
+    overflow: hidden;
   }
-  .service-row:nth-child(1) { transition-delay: 0ms; }
-  .service-row:nth-child(2) { transition-delay: 80ms; }
-  .service-row:nth-child(3) { transition-delay: 160ms; }
-  .service-row:nth-child(4) { transition-delay: 240ms; }
-  .service-row:nth-child(5) { transition-delay: 320ms; }
-  .service-num {
-    font-family: var(--font-heading);
-    font-size: 15px;
+  .value-plate { position: absolute; inset: 0; }
+  .value-mask {
+    position: absolute; inset: 0; z-index: 1;
+    background-color: var(--color-plaster);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000'%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='55'/%3E%3C/filter%3E%3Crect width='1000' height='1000' fill='black'/%3E%3Cpath d='M-50,420 C150,500 300,340 480,420 C650,500 780,360 1050,430 L1050,-50 L-50,-50 Z' fill='white' filter='url(%23b)'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000'%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='55'/%3E%3C/filter%3E%3Crect width='1000' height='1000' fill='black'/%3E%3Cpath d='M-50,420 C150,500 300,340 480,420 C650,500 780,360 1050,430 L1050,-50 L-50,-50 Z' fill='white' filter='url(%23b)'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 400%; mask-size: 100% 400%;
+    -webkit-mask-position: 0% 100%; mask-position: 0% 100%;
+    transition: -webkit-mask-position 1.6s var(--motion-ease), mask-position 1.6s var(--motion-ease);
+  }
+  .value-block.in .value-mask {
+    -webkit-mask-position: 0% 0%; mask-position: 0% 0%;
+  }
+  .value-text { margin-top: var(--space-6); max-width: 34em; }
+  .value-eyebrow {
+    display: block;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--color-ink-soft);
-    width: 1.5em;
-    flex-shrink: 0;
   }
-  .service-name {
+  .value-title {
     font-family: var(--font-heading);
-    font-size: clamp(19px, 2vw, 24px);
-    width: 9em;
-    flex-shrink: 0;
+    font-weight: 400;
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.6;
+    margin: var(--space-4) 0 0 0;
   }
-  .service-desc {
+  .value-desc {
     font-size: 14px;
     line-height: 1.9;
     color: var(--color-ink-soft);
-    max-width: 32em;
+    margin: var(--space-4) 0 0 0;
   }
+
+  /* Placeholder plates — swap for real project photography */
+  .value-plate::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+  .value-plate.is-1 { background: radial-gradient(ellipse at 70% 25%, rgba(86,140,130,0.10), transparent 55%), linear-gradient(200deg, #0c1016 0%, #1c222b 45%, #2a3440 100%); }
+  .value-plate.is-2 { background: radial-gradient(ellipse at 30% 70%, rgba(38,57,75,0.35), transparent 55%), linear-gradient(160deg, #14161c 0%, #1b2530 55%, #26394b 100%); }
+  .value-plate.is-3 { background: radial-gradient(ellipse at 60% 30%, rgba(199,201,203,0.10), transparent 55%), linear-gradient(190deg, #0d0f13 0%, #191d24 50%, #22272f 100%); }
 
   @media (max-width: 860px) {
     .concept-body { margin-left: 0; margin-top: var(--space-7); }
-    .service-row { flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
-    .service-name { width: auto; }
-    .service-desc { max-width: none; flex-basis: 100%; padding-left: calc(1.5em + var(--space-6)); }
+    .value-media { height: 46vh; }
   }
 
   @media (max-width: 640px) {
@@ -330,6 +348,8 @@
     .hero-foot { padding: 0 var(--space-5); flex-direction: column; align-items: flex-start; gap: var(--space-5); }
     .concept { padding: var(--space-8) var(--space-5); }
     .concept-headline { max-width: none; }
+    .service-inner { padding: 0 var(--space-5); }
+    .value-block { padding: 0 var(--space-5); }
   }
 </style>
 </head>
@@ -383,33 +403,44 @@
   <div class="service-inner">
     <span class="service-eyebrow reveal">02 — Service</span>
     <h2 class="service-headline reveal">できること。</h2>
-    <ul class="service-list">
-      <li class="service-row reveal">
-        <span class="service-num">一</span>
-        <span class="service-name">外構工事</span>
-        <span class="service-desc">新築・リフォームを問わず、住まいの「顔」となる外まわりを設計します。</span>
-      </li>
-      <li class="service-row reveal">
-        <span class="service-num">二</span>
-        <span class="service-name">庭園設計・施工</span>
-        <span class="service-desc">和モダンの庭を、既存の敷地・建築に合わせて一から作ります。</span>
-      </li>
-      <li class="service-row reveal">
-        <span class="service-num">三</span>
-        <span class="service-name">植栽・剪定</span>
-        <span class="service-desc">木々の育ち方を見ながら、経年で美しくなる庭を維持します。</span>
-      </li>
-      <li class="service-row reveal">
-        <span class="service-num">四</span>
-        <span class="service-name">石材・エクステリア</span>
-        <span class="service-desc">塀・アプローチ・門まわりなど、庭と建築をつなぐ構造物を手がけます。</span>
-      </li>
-      <li class="service-row reveal">
-        <span class="service-num">五</span>
-        <span class="service-name">メンテナンス</span>
-        <span class="service-desc">竣工後も、庭は変わり続けます。季節ごとのお手入れも承ります。</span>
-      </li>
-    </ul>
+  </div>
+
+  <div class="value-list">
+    <div class="value-block reveal" id="value-1">
+      <div class="value-media">
+        <div class="value-plate is-1"></div>
+        <div class="value-mask"></div>
+      </div>
+      <div class="value-text">
+        <span class="value-eyebrow">Value 01</span>
+        <h3 class="value-title">既存の建築に、<br>庭という余白を差し込む。</h3>
+        <p class="value-desc">庭園設計・施工。敷地や建物の個性を読み取り、そこにしかない庭を一から設計します。図面の前に、まず現地の光と風を見ることから。</p>
+      </div>
+    </div>
+
+    <div class="value-block reveal" id="value-2">
+      <div class="value-media">
+        <div class="value-plate is-2"></div>
+        <div class="value-mask"></div>
+      </div>
+      <div class="value-text">
+        <span class="value-eyebrow">Value 02</span>
+        <h3 class="value-title">塀や門は、暮らしと外を<br>隔てる、最初の結界。</h3>
+        <p class="value-desc">外構・エクステリア。アプローチ・塀・カーポートなど、庭と建築をつなぐ構造物を手がけます。素材の質感が、住まいの第一印象を決めます。</p>
+      </div>
+    </div>
+
+    <div class="value-block reveal" id="value-3">
+      <div class="value-media">
+        <div class="value-plate is-3"></div>
+        <div class="value-mask"></div>
+      </div>
+      <div class="value-text">
+        <span class="value-eyebrow">Value 03</span>
+        <h3 class="value-title">庭は、完成したあとも、<br>共に育っていく。</h3>
+        <p class="value-desc">剪定・メンテナンス。植栽の手入れは庭を若く保つ作業ではなく、時間を味方につける作業です。季節ごとに、庭の声を聞きます。</p>
+      </div>
+    </div>
   </div>
 </section>
 
