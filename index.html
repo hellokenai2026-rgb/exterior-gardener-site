@@ -278,12 +278,17 @@
   .value-photo {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover;
-    /* driven every scroll tick by JS, not a CSS transition — opacity must
-       track scroll position 1:1 (returntonature.jp scrubs it the same way),
-       not snap to a fixed-duration animation once triggered */
-    opacity: var(--value-photo-opacity, 0);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+    /* mask-image itself is set inline by JS every scroll tick, not a CSS
+       transition — a soft linear-gradient wipe that grows upward from the
+       bottom of the frame, gradually covering the photo beneath it as
+       scroll reaches this photo's turn. Must track scroll position 1:1. */
   }
-  .value-photo:first-child { opacity: var(--value-photo-opacity, 1); }
+  .value-photo:first-child {
+    /* base layer: no mask, always fully visible underneath the others */
+    -webkit-mask-image: none; mask-image: none;
+  }
 
   .value-panels { margin-top: var(--space-7); }
   .value-panel {
@@ -478,14 +483,13 @@
     updateParallax();
   }
 
-  // Value: one fixed photo "window" that crossfades to the next photo in direct
-  // proportion to scroll position (verified against returntonature.jp: its
-  // image opacity is a continuous function of scrollY, not a fixed-duration
-  // transition triggered once a panel enters view). No CSS transition and no
-  // triggered/discrete state — every scroll tick recomputes a single
-  // continuous progress value (0 .. photoCount-1) from how much of
-  // #value-list's own scrollable range has been consumed, then sets each
-  // photo's opacity directly from its distance to that progress value.
+  // Value: one fixed photo "window" whose contents wipe from one photo to
+  // the next as the visitor scrolls (verified against returntonature.jp,
+  // which drives the same effect via a per-block ScrollTrigger that moves
+  // a soft vertical mask over each photo — not a fixed-duration transition
+  // triggered once a panel enters view). No CSS transition and no
+  // triggered/discrete state: every scroll tick recomputes each photo's
+  // mask position directly from its own panel's position in the viewport.
   //
   // The text panels are handled separately: unlike the photos (which are
   // stacked on top of each other in one box and must crossfade), the panels
@@ -499,15 +503,8 @@
   const valuePhotos = document.querySelectorAll('.value-photo');
   if (valueList && valuePanels.length && valuePhotos.length) {
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-    const count = valuePhotos.length;
     const updateValueScrub = () => {
-      const rect = valueList.getBoundingClientRect();
       const vh = window.innerHeight;
-      const scrollableRange = valueList.offsetHeight - vh;
-      const consumed = clamp(-rect.top, 0, scrollableRange);
-      const ratio = scrollableRange > 0 ? consumed / scrollableRange : 0;
-      const progress = ratio * (count - 1);
-
       const viewportMid = vh / 2;
       // how far (px) a panel's center can drift from viewport-center before
       // it's fully opacity:0 — smaller = a clearer fully-invisible gap
@@ -519,9 +516,32 @@
         const distance = clamp(1 - Math.abs(panelMid - viewportMid) / fadeSpan, 0, 1);
         panel.style.setProperty('--value-panel-opacity', distance.toFixed(3));
       });
+      // Each photo (except the base one at index 0) wipes in from the
+      // bottom edge of the frame, covering the photo beneath it — instead
+      // of a flat opacity crossfade. Tied to its own panel's position in
+      // the viewport (not the shared list-wide progress ratio), the same
+      // way returntonature.jp drives each photo off its own text block's
+      // scroll trigger: the wipe starts as soon as that panel's top edge
+      // is still mostly below the viewport, and finishes while the panel
+      // is still comfortably below the top — so the reveal reads as
+      // "the photo catches up with the text scrolling into place",
+      // not a rigid fraction of total scroll distance.
+      const triggerStart = vh * 0.85;
+      const triggerEnd = vh * 0.15;
       valuePhotos.forEach((photo, i) => {
-        const distance = clamp(1 - Math.abs(progress - i), 0, 1);
-        photo.style.setProperty('--value-photo-opacity', distance.toFixed(3));
+        if (i === 0) return; // base layer stays mask:none, always visible
+        const panelRect = valuePanels[i].getBoundingClientRect();
+        const t = clamp((triggerStart - panelRect.top) / (triggerStart - triggerEnd), 0, 1);
+        const reveal = t * 100;
+        const softEdge = 22; // percentage-points of soft blend at the wipe edge
+        const hardStop = Math.max(0, reveal - softEdge);
+        // use white (not black) for the opaque stops: modern browsers mask
+        // by alpha either way, but some engines fall back to luminance for
+        // CSS-gradient masks, and luminance treats black as "hide" — which
+        // is exactly the dark smudge at the wipe edge you're seeing
+        const gradient = `linear-gradient(to top, white 0%, white ${hardStop.toFixed(1)}%, transparent ${reveal.toFixed(1)}%, transparent 100%)`;
+        photo.style.maskImage = gradient;
+        photo.style.webkitMaskImage = gradient;
       });
     };
     let ticking = false;
