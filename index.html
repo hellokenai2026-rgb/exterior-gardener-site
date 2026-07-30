@@ -208,6 +208,32 @@
     padding: var(--space-9) var(--space-6);
     overflow: hidden;
   }
+  /* Leaf shadows drifting on a plastered wall — the Concept copy is about a
+     garden that keeps changing after it's "finished", so the one moving thing
+     in this section is weather, not the design. Kept near-still and washed out
+     to canvas white so it reads as a texture, never as a video playing. */
+  .concept-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    filter: grayscale(1) contrast(0.85);
+    pointer-events: none;
+    user-select: none;
+  }
+  .concept-veil {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      100deg,
+      var(--color-canvas) 0%,
+      rgba(232, 233, 235, 0.86) 45%,
+      rgba(232, 233, 235, 0.68) 100%
+    );
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .concept-video { display: none; }
+  }
   .concept-inner {
     position: relative;
     max-width: var(--max-width);
@@ -397,6 +423,8 @@
 </section>
 
 <section class="concept" id="concept">
+  <video class="concept-video" src="movies/concept-leaf-shadow.mp4" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+  <div class="concept-veil" aria-hidden="true"></div>
   <div class="concept-inner">
     <span class="concept-eyebrow reveal">01 — Concept</span>
     <h2 class="concept-headline reveal">完成させないことを、<br>設計する。</h2>
