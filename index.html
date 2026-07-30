@@ -423,7 +423,7 @@
 </section>
 
 <section class="concept" id="concept">
-  <video class="concept-video" src="movies/concept-leaf-shadow.mp4" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+  <video class="concept-video" src="movies/concept-leaf-shadow.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
   <div class="concept-veil" aria-hidden="true"></div>
   <div class="concept-inner">
     <span class="concept-eyebrow reveal">01 — Concept</span>
@@ -509,6 +509,32 @@
     };
     window.addEventListener('scroll', updateParallax, { passive: true });
     updateParallax();
+  }
+
+  // Concept background video: don't rely on the autoplay attribute alone.
+  // The section sits below the hero, so the video is offscreen at load —
+  // browsers routinely defer or suspend playback for offscreen media, and
+  // Low Power Mode blocks the initial autoplay outright. Driving play/pause
+  // off an IntersectionObserver both guarantees it starts when the visitor
+  // actually arrives at the section and stops it spending CPU when they've
+  // scrolled past.
+  const conceptVideo = document.querySelector('.concept-video');
+  if (conceptVideo && !prefersReducedMotion) {
+    const tryPlay = () => { const p = conceptVideo.play(); if (p) p.catch(() => {}); };
+    const videoIo = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) tryPlay();
+        else conceptVideo.pause();
+      });
+    }, { threshold: 0 });
+    videoIo.observe(conceptVideo);
+    // A tab that loads in the background gets its playback suspended; resume
+    // it when the visitor comes back, provided the section is still in view.
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) return;
+      const r = conceptVideo.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < window.innerHeight) tryPlay();
+    });
   }
 
   // Value: one fixed photo "window" whose contents wipe from one photo to
