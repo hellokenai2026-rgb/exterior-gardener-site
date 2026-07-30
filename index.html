@@ -216,19 +216,19 @@
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
-    opacity: 0.5;
-    filter: grayscale(1) contrast(0.85);
     pointer-events: none;
     user-select: none;
+    /* TEMPORARY: shown at full strength so playback is obvious to verify.
+       The intended treatment is opacity 0.5 + grayscale(1) contrast(0.85)
+       plus .concept-veil, which reads as wall texture rather than video —
+       restore both once playback is confirmed. */
   }
   .concept-veil {
     position: absolute; inset: 0;
-    background: linear-gradient(
-      100deg,
-      var(--color-canvas) 0%,
-      rgba(232, 233, 235, 0.86) 45%,
-      rgba(232, 233, 235, 0.68) 100%
-    );
+    /* TEMPORARY: veil disabled for the same verification. Intended value:
+       linear-gradient(100deg, var(--color-canvas) 0%,
+       rgba(232,233,235,0.86) 45%, rgba(232,233,235,0.68) 100%) */
+    display: none;
     pointer-events: none;
   }
   @media (prefers-reduced-motion: reduce) {
