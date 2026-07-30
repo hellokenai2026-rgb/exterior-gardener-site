@@ -208,22 +208,6 @@
     padding: var(--space-9) var(--space-6);
     overflow: hidden;
   }
-  .concept-mark {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: clamp(220px, 30vw, 420px);
-    height: clamp(220px, 30vw, 420px);
-    background-image: url('images/logo.png');
-    background-repeat: no-repeat;
-    background-position: left center;
-    background-size: auto clamp(220px, 30vw, 420px);
-    pointer-events: none;
-    user-select: none;
-    opacity: 0;
-    transition: opacity 2.4s var(--motion-ease);
-  }
-  .concept-mark.in { opacity: 0.08; }
   .concept-inner {
     position: relative;
     max-width: var(--max-width);
@@ -294,23 +278,20 @@
   .value-photo {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover;
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000'%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='55'/%3E%3C/filter%3E%3Crect width='1000' height='1000' fill='black'/%3E%3Cpath d='M-50,420 C150,500 300,340 480,420 C650,500 780,360 1050,430 L1050,-50 L-50,-50 Z' fill='white' filter='url(%23b)'/%3E%3C/svg%3E");
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000'%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='55'/%3E%3C/filter%3E%3Crect width='1000' height='1000' fill='black'/%3E%3Cpath d='M-50,420 C150,500 300,340 480,420 C650,500 780,360 1050,430 L1050,-50 L-50,-50 Z' fill='white' filter='url(%23b)'/%3E%3C/svg%3E");
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-size: 100% 400%; mask-size: 100% 400%;
-    /* driven every scroll tick by JS, not a CSS transition — the wipe must
+    /* driven every scroll tick by JS, not a CSS transition — opacity must
        track scroll position 1:1 (returntonature.jp scrubs it the same way),
        not snap to a fixed-duration animation once triggered */
-    -webkit-mask-position: 0% var(--value-mask-y, 100%);
-    mask-position: 0% var(--value-mask-y, 100%);
-    -webkit-mask-mode: luminance; mask-mode: luminance;
+    opacity: var(--value-photo-opacity, 0);
   }
+  .value-photo:first-child { opacity: var(--value-photo-opacity, 1); }
 
   .value-panels { margin-top: var(--space-7); }
   .value-panel {
     padding: var(--space-7) var(--space-6);
+    /* same continuous scroll-driven fade as the photo, not a fixed floor */
     opacity: var(--value-panel-opacity, 0.4);
   }
+  .value-panel.is-active { opacity: var(--value-panel-opacity, 1); }
   .value-eyebrow {
     display: block;
     font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -337,22 +318,25 @@
 
   @media (min-width: 860px) {
     .value-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      column-gap: var(--space-8);
-      max-width: var(--max-width);
-      margin-left: auto; margin-right: auto;
-      padding: 0 var(--space-6);
+      display: flex;
+      align-items: flex-start;
     }
     .value-frame {
       position: sticky;
-      top: var(--space-7);
-      height: 64vh;
-      min-height: 440px;
+      top: 0;
+      width: 50%;
+      flex: 0 0 50%;
+      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-      align-self: start;
     }
-    .value-panels { margin-top: 0; }
+    .value-panels {
+      width: 50%;
+      flex: 0 0 50%;
+      margin-top: 0;
+      padding: 0 var(--space-6) 0 var(--space-8);
+      box-sizing: border-box;
+    }
     .value-panel {
       min-height: 80vh;
       padding: 0;
@@ -374,7 +358,7 @@
     .concept { padding: var(--space-8) var(--space-5); }
     .concept-headline { max-width: none; }
     .service-inner { padding: 0 var(--space-5); }
-    .value-frame { margin: 0 var(--space-5); height: 42vh; min-height: 260px; }
+    .value-frame { margin: 0 var(--space-5); height: 55vh; min-height: 340px; }
     .value-panel { padding: var(--space-6) var(--space-5); }
   }
 </style>
@@ -408,7 +392,6 @@
 </section>
 
 <section class="concept" id="concept">
-  <span class="concept-mark reveal" aria-hidden="true"></span>
   <div class="concept-inner">
     <span class="concept-eyebrow reveal">01 — Concept</span>
     <h2 class="concept-headline reveal">完成させないことを、<br>設計する。</h2>
@@ -495,15 +478,22 @@
     updateParallax();
   }
 
-  // Value: one fixed photo "window" that scrubs to the next photo in direct
+  // Value: one fixed photo "window" that crossfades to the next photo in direct
   // proportion to scroll position (verified against returntonature.jp: its
-  // mask-position is a continuous function of scrollY, not a fixed-duration
+  // image opacity is a continuous function of scrollY, not a fixed-duration
   // transition triggered once a panel enters view). No CSS transition and no
   // triggered/discrete state — every scroll tick recomputes a single
   // continuous progress value (0 .. photoCount-1) from how much of
   // #value-list's own scrollable range has been consumed, then sets each
-  // photo/panel's mask-position / opacity directly from its distance to
-  // that progress value. rAF-throttled so it runs at most once per frame.
+  // photo's opacity directly from its distance to that progress value.
+  //
+  // The text panels are handled separately: unlike the photos (which are
+  // stacked on top of each other in one box and must crossfade), the panels
+  // sit one after another in normal document flow. So each panel's opacity
+  // is driven by its own distance from the vertical center of the viewport —
+  // it fades in from 0 as it approaches center, and fades back out to a full
+  // 0 well before the next panel arrives, instead of overlapping with it.
+  // rAF-throttled so it runs at most once per frame.
   const valueList = document.getElementById('value-list');
   const valuePanels = document.querySelectorAll('.value-panel');
   const valuePhotos = document.querySelectorAll('.value-photo');
@@ -518,13 +508,20 @@
       const ratio = scrollableRange > 0 ? consumed / scrollableRange : 0;
       const progress = ratio * (count - 1);
 
-      valuePanels.forEach((panel, i) => {
-        const distance = clamp(1 - Math.abs(progress - i), 0, 1);
-        panel.style.setProperty('--value-panel-opacity', (0.4 + 0.6 * distance).toFixed(3));
+      const viewportMid = vh / 2;
+      // how far (px) a panel's center can drift from viewport-center before
+      // it's fully opacity:0 — smaller = a clearer fully-invisible gap
+      // between one panel finishing its fade-out and the next starting in
+      const fadeSpan = vh * 0.45;
+      valuePanels.forEach((panel) => {
+        const panelRect = panel.getBoundingClientRect();
+        const panelMid = panelRect.top + panelRect.height / 2;
+        const distance = clamp(1 - Math.abs(panelMid - viewportMid) / fadeSpan, 0, 1);
+        panel.style.setProperty('--value-panel-opacity', distance.toFixed(3));
       });
       valuePhotos.forEach((photo, i) => {
         const distance = clamp(1 - Math.abs(progress - i), 0, 1);
-        photo.style.setProperty('--value-mask-y', (100 - distance * 100).toFixed(2) + '%');
+        photo.style.setProperty('--value-photo-opacity', distance.toFixed(3));
       });
     };
     let ticking = false;
