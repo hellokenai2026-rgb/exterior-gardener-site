@@ -343,6 +343,74 @@
     max-width: 30em;
   }
 
+  /* ---------- Process（飛び石） ----------
+     Stepping stones are never laid in a straight line and never at even
+     intervals — the irregularity breaks the walker's stride so they slow
+     down and watch their feet. That function is the form here: the steps
+     are deliberately NOT joined by a connecting line or a progress rail,
+     and their indents are uneven, because this section's job is to tell a
+     visitor facing an expensive, slow decision that they are not being
+     hurried. Stones, not a timeline. */
+  .process {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    padding: var(--space-9) var(--space-6);
+  }
+  .process-inner { max-width: var(--max-width); margin: 0 auto; }
+  .process-eyebrow {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+  .process-headline {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 40px);
+    margin: var(--space-5) 0 0 0;
+  }
+  .process-steps {
+    margin: var(--space-9) 0 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .process-step {
+    display: grid;
+    grid-template-columns: 3.5em 1fr;
+    column-gap: var(--space-6);
+    max-width: 44em;
+  }
+  .process-step + .process-step { margin-top: var(--space-8); }
+  /* stones land one at a time — reuses the base .reveal, only offsetting it */
+  .process-step:nth-child(2) { transition-delay: 90ms; }
+  .process-step:nth-child(3) { transition-delay: 180ms; }
+  .process-step:nth-child(4) { transition-delay: 270ms; }
+  /* uneven indents — a laid path, not a ruled list */
+  .process-step:nth-child(1) { margin-left: 0; }
+  .process-step:nth-child(2) { margin-left: 7%; }
+  .process-step:nth-child(3) { margin-left: 2%; }
+  .process-step:nth-child(4) { margin-left: 11%; }
+  .process-num {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 3.4vw, 40px);
+    line-height: 1.2;
+    color: var(--color-ink-soft);
+  }
+  .process-step-title {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: clamp(18px, 2.2vw, 24px);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .process-step-body {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--color-ink-soft);
+    margin: var(--space-4) 0 0 0;
+  }
+
   @media (max-width: 859px) {
     .value-panel + .value-panel { border-top: 1px solid var(--color-hairline); }
   }
@@ -387,6 +455,12 @@
     .hero-eyebrow-vertical { top: 96px; }
     .hero-foot { padding: 0 var(--space-5); flex-direction: column; align-items: flex-start; gap: var(--space-5); }
     .concept { padding: var(--space-8) var(--space-5); }
+    /* Narrow screens have no room for the stagger — the indents would eat
+       the text column. Keep the stones flush and let the vertical gaps
+       alone carry the "spaced out, unhurried" reading. */
+    .process { padding: var(--space-8) var(--space-5); }
+    .process-step { grid-template-columns: 2.4em 1fr; column-gap: var(--space-5); }
+    .process-step:nth-child(n) { margin-left: 0; }
     .concept-headline { max-width: none; }
     .service-inner { padding: 0 var(--space-5); }
     .value-frame { margin: 0 var(--space-5); height: 55vh; min-height: 340px; }
@@ -473,6 +547,47 @@
         <p class="value-desc">剪定・メンテナンス。植栽の手入れは庭を若く保つ作業ではなく、時間を味方につける作業です。季節ごとに、庭の声を聞きます。</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="process" id="process">
+  <div class="process-inner">
+    <span class="process-eyebrow reveal">03 — Process</span>
+    <h2 class="process-headline reveal">決めるまでを、急がない。</h2>
+
+    <ol class="process-steps">
+      <li class="process-step reveal">
+        <span class="process-num" aria-hidden="true">一</span>
+        <div>
+          <h3 class="process-step-title">ご相談・現地調査</h3>
+          <p class="process-step-body">まず敷地を見せてください。図面より先に、その場の光の入り方、風の抜け方、隣家との距離を確かめます。まだ決めていない段階でのご相談で構いません。</p>
+        </div>
+      </li>
+
+      <li class="process-step reveal">
+        <span class="process-num" aria-hidden="true">二</span>
+        <div>
+          <h3 class="process-step-title">ご提案・お見積り</h3>
+          <p class="process-step-body">平面図と仕上がりのイメージ、費用の内訳をお出しします。納得いただけるまで描き直します。この段階で費用が合わなければ、遠慮なくお伝えください。</p>
+        </div>
+      </li>
+
+      <li class="process-step reveal">
+        <span class="process-num" aria-hidden="true">三</span>
+        <div>
+          <h3 class="process-step-title">施工</h3>
+          <p class="process-step-body">着工から完了まで、工程と進み具合をその都度お伝えします。現場で石や木の据わりを見ながら、細部は最後まで調整します。</p>
+        </div>
+      </li>
+
+      <li class="process-step reveal">
+        <span class="process-num" aria-hidden="true">四</span>
+        <div>
+          <h3 class="process-step-title">お引き渡し、そのあと</h3>
+          <p class="process-step-body">庭は引き渡した日から変わり続けます。剪定や手入れのご相談は、そのあとも承ります。ここで終わりにしないための工程です。</p>
+        </div>
+      </li>
+    </ol>
   </div>
 </section>
 
