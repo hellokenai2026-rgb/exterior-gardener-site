@@ -1281,12 +1281,14 @@
   // offsetTop, never getBoundingClientRect: the sections are themselves
   // being transformed, and reading their rendered rect would feed the
   // transform back into its own input.
+  // The footer is deliberately left out of the chain: it is the one block
+  // that is not part of the walk, so Contact is not held for it and the
+  // footer simply follows in normal flow.
   const stackedEls = [...document.querySelectorAll('.stacked')];
-  const stackTail = document.querySelector('.site-footer');
   let updateStack = () => {};
   if (stackedEls.length && !prefersReducedMotion) {
     const pairs = stackedEls
-      .map((el, i) => ({ el, next: stackedEls[i + 1] || stackTail }))
+      .map((el, i) => ({ el, next: stackedEls[i + 1] }))
       .filter(p => p.next);
     updateStack = () => {
       const vh = window.innerHeight;
