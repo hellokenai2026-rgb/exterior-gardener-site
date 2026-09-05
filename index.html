@@ -208,7 +208,17 @@
      value is a pure function of scroll position — it cannot drift out of
      sync or need easing. Paint order is DOM order, so each section
      covers the one before it without any z-index. */
-  .stacked { will-change: transform; }
+  .stacked {
+    will-change: transform;
+    /* Every section in the chain has to be able to cover a whole screen.
+       A released section stays displaced by one viewport, so it only stays
+       out of sight while whatever follows it fills the screen — and a held
+       section is pinned by its bottom edge, so it covers the viewport
+       exactly when it is at least that tall. Process (1153px) and Company
+       (1042px) were shorter than that, which let the section from two
+       hand-offs earlier reappear along the top edge. */
+    min-height: 100vh;
+  }
 
   /* ---------- Reveal (base 1-pattern reveal, reused across all sections) ---------- */
   .reveal {
