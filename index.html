@@ -192,6 +192,24 @@
     background: rgba(236,237,238,0.4);
   }
 
+  /* ---------- Section stacking（重ね送り） ----------
+     Each section holds still while the next one slides up over it, then
+     resumes. Driven by transform from JS rather than position:sticky:
+     sticky is constrained by its containing block, and with <body> as the
+     containing block a `bottom: 0` sticky drags every not-yet-reached
+     section up to the viewport bottom immediately, piling the whole page
+     at the top. `top: 0` sticky avoids that but freezes a section the
+     moment its top lands, hiding the lower two thirds of a 3400px section
+     like Works. Translating by exactly the amount the next section
+     overlaps cancels the scroll for the duration of the hand-off and
+     works at any section height.
+
+     Only transform is touched, so it composites on the GPU, and the
+     value is a pure function of scroll position — it cannot drift out of
+     sync or need easing. Paint order is DOM order, so each section
+     covers the one before it without any z-index. */
+  .stacked { will-change: transform; }
+
   /* ---------- Reveal (base 1-pattern reveal, reused across all sections) ---------- */
   .reveal {
     opacity: 0;
@@ -273,7 +291,11 @@
 
   /* ---------- Service (Value-style, mask-wipe reveal) ---------- */
   .service {
-    position: relative;
+    /* no `position` here on purpose — .stacked sets sticky, and an equally
+       specific `position: relative` declared later would silently win and
+       kill the stacking. Nothing inside needs .service as its containing
+       block: .value-photo resolves against .value-frame, which is itself
+       positioned. */
     background-color: var(--color-plaster);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
     color: var(--color-ink);
@@ -457,6 +479,10 @@
     background: var(--color-canvas);
     color: var(--color-ink);
     padding: var(--space-9) var(--space-6);
+    /* Company slides up over Process and both are canvas white, so the
+       sliding edge would otherwise be invisible. Every other hand-off in
+       the stack changes value (plaster→ink→canvas→…) and needs no line. */
+    border-top: 1px solid var(--color-hairline);
   }
   .company-inner { max-width: var(--max-width); margin: 0 auto; }
   .company-eyebrow {
@@ -865,7 +891,7 @@
   </div>
 </section>
 
-<section class="service" id="service">
+<section class="service stacked" id="service">
   <div class="service-inner">
     <span class="service-eyebrow reveal">02 — Service</span>
     <h2 class="service-headline reveal">できること。</h2>
@@ -900,7 +926,7 @@
   </div>
 </section>
 
-<section class="works" id="works">
+<section class="works stacked" id="works">
   <div class="works-inner">
     <span class="works-eyebrow reveal">03 — Works</span>
     <h2 class="works-headline reveal">これまでに、据えてきたもの。</h2>
@@ -963,7 +989,7 @@
   </div>
 </section>
 
-<section class="process" id="process">
+<section class="process stacked" id="process">
   <div class="process-inner">
     <span class="process-eyebrow reveal">04 — Process</span>
     <h2 class="process-headline reveal">決めるまでを、急がない。</h2>
@@ -1004,7 +1030,7 @@
   </div>
 </section>
 
-<section class="company" id="company">
+<section class="company stacked" id="company">
   <div class="company-inner">
     <span class="company-eyebrow reveal">05 — Company</span>
     <h2 class="company-headline reveal">庭に、人を招く仕事です。</h2>
@@ -1026,7 +1052,7 @@
   </div>
 </section>
 
-<section class="contact" id="contact">
+<section class="contact stacked" id="contact">
   <div class="contact-inner">
     <span class="contact-eyebrow reveal">06 — Contact</span>
     <h2 class="contact-headline reveal">まずは、敷地を見せてください。</h2>
@@ -1111,13 +1137,29 @@
     updateProgress();
   }
 
+  // Where an element sits in the document by layout, ignoring any transform
+  // currently applied to it or its ancestors. Every scroll-driven effect below
+  // must measure with this rather than getBoundingClientRect(): the stacking
+  // code translates whole sections, so a rect read would feed a transform back
+  // into the input of the calculation that produced it — and because each
+  // effect is throttled on its own rAF, whichever ran first would be reading a
+  // stale offset from the other.
+  const layoutTop = (el) => { let y = 0, n = el; while (n) { y += n.offsetTop; n = n.offsetParent; } return y; };
+
+  // How far each stacked section is currently being held (px). Written by the
+  // stacking pass, read by anything that needs an element's on-screen — as
+  // opposed to layout — position.
+  const holdOffsets = new Map();
+
   const parallaxEls = document.querySelectorAll('[data-parallax]');
   if (parallaxEls.length && !prefersReducedMotion) {
     const updateParallax = () => {
       const vh = window.innerHeight;
+      const scrollY = window.scrollY;
       parallaxEls.forEach(el => {
-        const rect = el.parentElement.getBoundingClientRect();
-        const centerProgress = (rect.top + rect.height / 2) / vh;
+        const parent = el.parentElement;
+        const top = layoutTop(parent) - scrollY;
+        const centerProgress = (top + parent.offsetHeight / 2) / vh;
         const clamped = Math.min(Math.max(centerProgress, 0), 1);
         const shift = (clamped - 0.5) * -16;
         el.style.setProperty('--parallax', shift.toFixed(2));
@@ -1171,18 +1213,26 @@
   const valueList = document.getElementById('value-list');
   const valuePanels = document.querySelectorAll('.value-panel');
   const valuePhotos = document.querySelectorAll('.value-photo');
+  let updateValueScrub = () => {};
   if (valueList && valuePanels.length && valuePhotos.length) {
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-    const updateValueScrub = () => {
+    // How far the Service section is currently being held by the stacking
+    // above. The panels ride along with it, so their on-screen position is
+    // their layout position plus that hold — without adding it back, a panel
+    // parked motionless on screen would keep fading as though it were still
+    // travelling, and Value 03's text would vanish while sitting still.
+    const valueSection = valueList.closest('.stacked');
+    updateValueScrub = () => {
+      const hold = holdOffsets.get(valueSection) || 0;
       const vh = window.innerHeight;
       const viewportMid = vh / 2;
       // how far (px) a panel's center can drift from viewport-center before
       // it's fully opacity:0 — smaller = a clearer fully-invisible gap
       // between one panel finishing its fade-out and the next starting in
       const fadeSpan = vh * 0.45;
+      const scrollY = window.scrollY;
       valuePanels.forEach((panel) => {
-        const panelRect = panel.getBoundingClientRect();
-        const panelMid = panelRect.top + panelRect.height / 2;
+        const panelMid = layoutTop(panel) - scrollY + hold + panel.offsetHeight / 2;
         const distance = clamp(1 - Math.abs(panelMid - viewportMid) / fadeSpan, 0, 1);
         panel.style.setProperty('--value-panel-opacity', distance.toFixed(3));
       });
@@ -1200,8 +1250,8 @@
       const triggerEnd = vh * 0.15;
       valuePhotos.forEach((photo, i) => {
         if (i === 0) return; // base layer stays mask:none, always visible
-        const panelRect = valuePanels[i].getBoundingClientRect();
-        const t = clamp((triggerStart - panelRect.top) / (triggerStart - triggerEnd), 0, 1);
+        const panelTop = layoutTop(valuePanels[i]) - scrollY + hold;
+        const t = clamp((triggerStart - panelTop) / (triggerStart - triggerEnd), 0, 1);
         const reveal = t * 100;
         const softEdge = 22; // percentage-points of soft blend at the wipe edge
         const hardStop = Math.max(0, reveal - softEdge);
@@ -1214,15 +1264,50 @@
         photo.style.webkitMaskImage = gradient;
       });
     };
+  }
+
+  // Section stacking: hold each section still for exactly as long as the
+  // next one is sliding over it, then let it go. Positions come from
+  // offsetTop, never getBoundingClientRect: the sections are themselves
+  // being transformed, and reading their rendered rect would feed the
+  // transform back into its own input.
+  const stackedEls = [...document.querySelectorAll('.stacked')];
+  const stackTail = document.querySelector('.site-footer');
+  let updateStack = () => {};
+  if (stackedEls.length && !prefersReducedMotion) {
+    const pairs = stackedEls
+      .map((el, i) => ({ el, next: stackedEls[i + 1] || stackTail }))
+      .filter(p => p.next);
+    updateStack = () => {
+      const vh = window.innerHeight;
+      const scrollY = window.scrollY;
+      pairs.forEach(({ el, next }) => {
+        const nextTop = layoutTop(next) - scrollY;
+        // how much of the viewport the next section already covers; capped
+        // at one screen, past which this section is completely hidden and
+        // may as well scroll away normally
+        const overlap = Math.min(Math.max(vh - nextTop, 0), vh);
+        holdOffsets.set(el, overlap);
+        el.style.transform = overlap > 0 ? `translate3d(0, ${overlap.toFixed(1)}px, 0)` : '';
+      });
+    };
+  }
+
+  // One rAF for both passes, in a fixed order: the stacking decides how far
+  // each section is held, then the Value scrub reads that. Split across two
+  // independently throttled listeners they would race, and whichever ran
+  // first would be working from the other's previous frame.
+  {
     let ticking = false;
-    const onValueScroll = () => {
+    const runScrollPasses = () => { updateStack(); updateValueScrub(); };
+    const onScroll = () => {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(() => { updateValueScrub(); ticking = false; });
+      requestAnimationFrame(() => { runScrollPasses(); ticking = false; });
     };
-    window.addEventListener('scroll', onValueScroll, { passive: true });
-    window.addEventListener('resize', onValueScroll);
-    updateValueScrub();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    runScrollPasses();
   }
 
   // Contact form is deliberately not wired to a backend yet. Rather than let
