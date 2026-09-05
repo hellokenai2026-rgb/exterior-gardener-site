@@ -62,14 +62,17 @@
   /* ---------- Nav ---------- */
   .site-nav {
     position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
-    padding: var(--space-6);
+    /* Horizontal padding tracks the sections (space-6, dropping to space-5
+       under 640px) so the logo starts on the same left edge as every
+       section's content rather than floating on its own margin. */
+    padding: var(--space-5) var(--space-6);
     display: flex; align-items: center; justify-content: space-between;
     color: var(--color-on-ink);
     mix-blend-mode: difference;
   }
   .site-nav .logo {
     display: block;
-    height: 48px;
+    height: 36px;
     filter: invert(1);
   }
   .site-nav .nav-contact {
@@ -208,16 +211,25 @@
      value is a pure function of scroll position — it cannot drift out of
      sync or need easing. Paint order is DOM order, so each section
      covers the one before it without any z-index. */
-  .stacked {
-    will-change: transform;
-    /* Every section in the chain has to be able to cover a whole screen.
-       A released section stays displaced by one viewport, so it only stays
-       out of sight while whatever follows it fills the screen — and a held
-       section is pinned by its bottom edge, so it covers the viewport
-       exactly when it is at least that tall. Process (1153px) and Company
-       (1042px) were shorter than that, which let the section from two
-       hand-offs earlier reappear along the top edge. */
-    min-height: 100vh;
+  /* Desktop only. On a phone the browser grows and shrinks the viewport as
+     the address bar hides and reappears, so window.innerHeight changes
+     mid-scroll — the hold is computed from it, so every section jumped
+     vertically each time the bar moved. CSS 100vh measures the *large*
+     viewport and never changes, so it disagrees with innerHeight as well.
+     Beyond the jitter, holding a section for a whole screen of scrolling
+     costs far more of a phone screen than it gives back. */
+  @media (min-width: 860px) {
+    .stacked {
+      will-change: transform;
+      /* Every section in the chain has to be able to cover a whole screen.
+         A released section stays displaced by one viewport, so it only
+         stays out of sight while whatever follows it fills the screen —
+         and a held section is pinned by its bottom edge, so it covers the
+         viewport exactly when it is at least that tall. Process (1153px)
+         and Company (1042px) were shorter than that, which let the section
+         from two hand-offs earlier reappear along the top edge. */
+      min-height: 100vh;
+    }
   }
 
   /* ---------- Reveal (base 1-pattern reveal, reused across all sections) ---------- */
@@ -781,6 +793,20 @@
   }
 
   @media (max-width: 859px) {
+    /* The window has to stay on screen here too. Left in normal flow the
+       frame sits entirely above the panels (frame 1964–2411px, panels from
+       2459px), so it had already scrolled away by the time the second and
+       third photos were due — only Value 01's photo was ever seen. Pinning
+       it to the top keeps the same "window fixed, scenery changes" reading
+       as the desktop layout, with the text running underneath instead of
+       beside it. */
+    .value-frame {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    /* clear the pinned frame before the first panel starts */
+    .value-panels { margin-top: var(--space-7); }
     .value-panel + .value-panel { border-top: 1px solid var(--color-hairline); }
     /* A rock grouping needs width to read as a grouping. On one column the
        plates keep their differing proportions — that alone carries the
@@ -828,6 +854,8 @@
   }
 
   @media (max-width: 640px) {
+    .site-nav { padding: var(--space-4) var(--space-5); }
+    .site-nav .logo { height: 30px; }
     .hero-content { padding: 0 var(--space-5) 120px; }
     .hero-content h1 { font-size: 34px; max-width: 11em; }
     .hero-eyebrow-vertical { top: 96px; }
@@ -849,7 +877,9 @@
     .footer-address { flex-direction: column; align-items: flex-start; gap: var(--space-4); }
     .concept-headline { max-width: none; }
     .service-inner { padding: 0 var(--space-5); }
-    .value-frame { margin: 0 var(--space-5); height: 55vh; min-height: 340px; }
+    /* full-bleed once pinned: side gutters read as a gap between the frame
+       and the screen edge while it is stuck to the top */
+    .value-frame { margin: 0; height: 46vh; min-height: 280px; }
     .value-panel { padding: var(--space-6) var(--space-5); }
   }
 </style>
@@ -1256,8 +1286,13 @@
       // is still comfortably below the top — so the reveal reads as
       // "the photo catches up with the text scrolling into place",
       // not a rigid fraction of total scroll distance.
-      const triggerStart = vh * 0.85;
-      const triggerEnd = vh * 0.15;
+      // On mobile the frame is pinned across the top of the screen, so a
+      // panel that has reached 0.15vh is already behind it — the photo would
+      // finish changing out of sight. End the reveal while the panel is
+      // still in the readable band below the frame.
+      const narrow = !window.matchMedia('(min-width: 860px)').matches;
+      const triggerStart = vh * (narrow ? 0.98 : 0.85);
+      const triggerEnd = vh * (narrow ? 0.58 : 0.15);
       valuePhotos.forEach((photo, i) => {
         if (i === 0) return; // base layer stays mask:none, always visible
         const panelTop = layoutTop(valuePanels[i]) - scrollY + hold;
@@ -1290,7 +1325,18 @@
     const pairs = stackedEls
       .map((el, i) => ({ el, next: stackedEls[i + 1] }))
       .filter(p => p.next);
+    // Matches the CSS breakpoint that grants .stacked its min-height. Below
+    // it there is no stacking at all, so any transform left over from a
+    // resize has to be cleared or the sections stay displaced.
+    const wide = window.matchMedia('(min-width: 860px)');
     updateStack = () => {
+      if (!wide.matches) {
+        if (holdOffsets.size) {
+          holdOffsets.clear();
+          stackedEls.forEach(el => { el.style.transform = ''; });
+        }
+        return;
+      }
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
       pairs.forEach(({ el, next }) => {
