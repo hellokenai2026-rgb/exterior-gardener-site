@@ -216,19 +216,24 @@
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
+    opacity: 0.72;
+    filter: grayscale(1) contrast(0.9);
     pointer-events: none;
     user-select: none;
-    /* TEMPORARY: shown at full strength so playback is obvious to verify.
-       The intended treatment is opacity 0.5 + grayscale(1) contrast(0.85)
-       plus .concept-veil, which reads as wall texture rather than video —
-       restore both once playback is confirmed. */
   }
+  /* The veil is weighted, not uniform: heaviest on the left where the
+     headline sits and over the right column where the body copy runs,
+     thinnest through the middle band that carries no text. The movement
+     stays legible where nobody is reading, and the type keeps its contrast. */
   .concept-veil {
     position: absolute; inset: 0;
-    /* TEMPORARY: veil disabled for the same verification. Intended value:
-       linear-gradient(100deg, var(--color-canvas) 0%,
-       rgba(232,233,235,0.86) 45%, rgba(232,233,235,0.68) 100%) */
-    display: none;
+    background: linear-gradient(
+      100deg,
+      rgba(232, 233, 235, 0.94) 0%,
+      rgba(232, 233, 235, 0.80) 30%,
+      rgba(232, 233, 235, 0.42) 55%,
+      rgba(232, 233, 235, 0.86) 100%
+    );
     pointer-events: none;
   }
   @media (prefers-reduced-motion: reduce) {
@@ -351,6 +356,269 @@
      and their indents are uneven, because this section's job is to tell a
      visitor facing an expensive, slow decision that they are not being
      hurried. Stones, not a timeline. */
+
+  /* ---------- Works（石組み） ----------
+     The one place the asymmetric-triad signature is used, and the only
+     dark section besides the hero — returning to ink here means the
+     gardens are seen at dusk, the same light the visitor arrived in.
+     Plates are placed as a rock grouping is set: never in a row, never
+     the same size, never at the same height. The composition is built to
+     read as type first, so it still stands as a designed index while the
+     photography is outstanding, and each plate accepts an <img> later
+     without the layout moving. */
+  .works {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    padding: var(--space-9) var(--space-6);
+  }
+  .works-inner { max-width: var(--max-width); margin: 0 auto; }
+  .works-eyebrow {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(236, 237, 238, 0.55);
+  }
+  .works-headline {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 40px);
+    margin: var(--space-5) 0 0 0;
+  }
+  .works-grid {
+    margin-top: var(--space-9);
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--space-6);
+  }
+  .work { display: block; }
+  .work-plate {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(150deg, #242935 0%, #171a22 100%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  /* placeholder mark — disappears on its own once an <img> is dropped in */
+  .work-plate:empty::after {
+    content: "撮影準備中";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(236, 237, 238, 0.38);
+    white-space: nowrap;
+  }
+  .work-photo {
+    position: absolute; top: -15%; left: 0;
+    width: 100%; height: 130%;
+    object-fit: cover;
+    transform: translateY(calc(var(--parallax, 0) * 1%));
+  }
+  .work-meta { margin-top: var(--space-4); }
+  .work-cat {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(236, 237, 238, 0.5);
+  }
+  .work-title {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: clamp(17px, 1.9vw, 21px);
+    line-height: 1.6;
+    margin: var(--space-2) 0 0 0;
+  }
+  .work-note {
+    font-size: 13px;
+    line-height: 1.9;
+    color: rgba(236, 237, 238, 0.6);
+    margin: var(--space-3) 0 0 0;
+    max-width: 26em;
+  }
+
+  /* the rock grouping: two triads, no two plates alike or level */
+  .work:nth-child(1) { grid-column: 1 / 7;  grid-row: 1; }
+  .work:nth-child(2) { grid-column: 8 / 13; grid-row: 1; margin-top: 16vh; }
+  .work:nth-child(3) { grid-column: 3 / 10; grid-row: 2; margin-top: var(--space-9); }
+  .work:nth-child(4) { grid-column: 1 / 6;  grid-row: 3; margin-top: var(--space-8); }
+  .work:nth-child(5) { grid-column: 7 / 13; grid-row: 3; margin-top: calc(var(--space-8) + 12vh); }
+  .work:nth-child(6) { grid-column: 4 / 11; grid-row: 4; margin-top: var(--space-9); }
+
+  .work:nth-child(1) .work-plate { aspect-ratio: 4 / 5; }
+  .work:nth-child(2) .work-plate { aspect-ratio: 4 / 3; }
+  .work:nth-child(3) .work-plate { aspect-ratio: 16 / 9; }
+  .work:nth-child(4) .work-plate { aspect-ratio: 3 / 4; }
+  .work:nth-child(5) .work-plate { aspect-ratio: 5 / 4; }
+  .work:nth-child(6) .work-plate { aspect-ratio: 2 / 1; }
+
+  /* ---------- Company ---------- */
+  .company {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    padding: var(--space-9) var(--space-6);
+  }
+  .company-inner { max-width: var(--max-width); margin: 0 auto; }
+  .company-eyebrow {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+  .company-headline {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 40px);
+    margin: var(--space-5) 0 0 0;
+  }
+  .company-lede {
+    margin: var(--space-7) 0 0 0;
+    max-width: 30em;
+    font-size: 15px;
+    line-height: 2.1;
+    color: var(--color-ink-soft);
+  }
+  .company-table {
+    margin: var(--space-9) 0 0 auto;
+    max-width: 34em;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .company-table th,
+  .company-table td {
+    text-align: left;
+    vertical-align: top;
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-hairline);
+    font-weight: 400;
+    line-height: 1.9;
+  }
+  .company-table th {
+    width: 8em;
+    color: var(--color-ink-soft);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- Contact（燈籠） ----------
+     The end of the roji, and the second and final appearance of the lamp
+     hover from the hero — entrance and exit lit by the same light. The
+     section returns to ink so that glow has darkness to happen in. */
+  .contact {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    padding: var(--space-9) var(--space-6);
+  }
+  .contact-inner { max-width: 46em; margin: 0 auto; }
+  .contact-eyebrow {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(236, 237, 238, 0.55);
+  }
+  .contact-headline {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 40px);
+    margin: var(--space-5) 0 0 0;
+  }
+  .contact-lede {
+    margin: var(--space-6) 0 0 0;
+    max-width: 28em;
+    font-size: 14px;
+    line-height: 1.9;
+    color: rgba(236, 237, 238, 0.7);
+  }
+  .contact-form { margin-top: var(--space-8); }
+  .field + .field { margin-top: var(--space-6); }
+  .field label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: rgba(236, 237, 238, 0.6);
+    margin-bottom: var(--space-3);
+  }
+  .field input,
+  .field textarea {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(236, 237, 238, 0.28);
+    border-radius: 0;
+    padding: var(--space-3) 0;
+    color: var(--color-on-ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.8;
+    transition: border-color var(--motion-duration) var(--motion-ease);
+  }
+  .field textarea { resize: vertical; min-height: 7em; }
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-bottom-color: var(--color-on-ink);
+  }
+  .contact-submit {
+    position: relative;
+    margin-top: var(--space-8);
+    display: inline-block;
+    padding: 4px 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(236, 237, 238, 0.5);
+    color: var(--color-on-ink);
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: border-color var(--motion-duration) var(--motion-ease), padding-right var(--motion-duration) var(--motion-ease);
+  }
+  /* the lamp: signature ①, second and last use on the page */
+  .contact-submit::before {
+    content: "";
+    position: absolute;
+    inset: -28px -20px;
+    background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity var(--motion-duration) var(--motion-ease);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .contact-submit:hover { border-bottom-color: var(--color-on-ink); padding-right: 8px; }
+  .contact-submit:hover::before { opacity: 0.4; }
+  .contact-note {
+    margin: var(--space-5) 0 0 0;
+    font-size: 12px;
+    line-height: 1.9;
+    color: rgba(236, 237, 238, 0.45);
+  }
+  .contact-status {
+    margin: var(--space-5) 0 0 0;
+    font-size: 13px;
+    line-height: 1.9;
+    color: rgba(236, 237, 238, 0.75);
+  }
+
+  /* ---------- Footer ---------- */
+  .site-footer {
+    background: var(--color-ink);
+    color: rgba(236, 237, 238, 0.5);
+    padding: var(--space-7) var(--space-6);
+    border-top: 1px solid var(--color-hairline-dark);
+  }
+  .footer-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  .footer-logo { height: 28px; width: auto; display: block; filter: invert(1); opacity: 0.7; }
   .process {
     background: var(--color-canvas);
     color: var(--color-ink);
@@ -413,6 +681,15 @@
 
   @media (max-width: 859px) {
     .value-panel + .value-panel { border-top: 1px solid var(--color-hairline); }
+    /* A rock grouping needs width to read as a grouping. On one column the
+       plates keep their differing proportions — that alone carries the
+       "no two alike" reading — but the horizontal staggering is dropped. */
+    .works-grid { display: block; }
+    .work { grid-column: auto; grid-row: auto; }
+    .work + .work { margin-top: var(--space-8); }
+    .work:nth-child(n) { margin-top: var(--space-8); }
+    .work:first-child { margin-top: 0; }
+    .company-table { margin-left: 0; }
   }
 
   @media (min-width: 860px) {
@@ -461,6 +738,11 @@
     .process { padding: var(--space-8) var(--space-5); }
     .process-step { grid-template-columns: 2.4em 1fr; column-gap: var(--space-5); }
     .process-step:nth-child(n) { margin-left: 0; }
+    .works { padding: var(--space-8) var(--space-5); }
+    .company { padding: var(--space-8) var(--space-5); }
+    .contact { padding: var(--space-8) var(--space-5); }
+    .company-table th { width: 6.5em; }
+    .footer-inner { flex-direction: column; align-items: flex-start; }
     .concept-headline { max-width: none; }
     .service-inner { padding: 0 var(--space-5); }
     .value-frame { margin: 0 var(--space-5); height: 55vh; min-height: 340px; }
@@ -550,9 +832,72 @@
   </div>
 </section>
 
+<section class="works" id="works">
+  <div class="works-inner">
+    <span class="works-eyebrow reveal">03 — Works</span>
+    <h2 class="works-headline reveal">これまでに、据えてきたもの。</h2>
+
+    <div class="works-grid">
+      <article class="work reveal">
+        <div class="work-plate"></div>
+        <div class="work-meta">
+          <span class="work-cat">新築外構</span>
+          <h3 class="work-title">光を通す塀</h3>
+          <p class="work-note">通りに閉じず、内に籠らない。目線だけを外し、光と風は通す距離を測りました。</p>
+        </div>
+      </article>
+
+      <article class="work reveal">
+        <div class="work-plate"></div>
+        <div class="work-meta">
+          <span class="work-cat">庭園改修</span>
+          <h3 class="work-title">苔と飛び石の中庭</h3>
+          <p class="work-note">既存の松はそのまま軸に残し、動線だけを引き直しました。</p>
+        </div>
+      </article>
+
+      <article class="work reveal">
+        <div class="work-plate"></div>
+        <div class="work-meta">
+          <span class="work-cat">リフォーム</span>
+          <h3 class="work-title">駐車場と植栽の再構成</h3>
+          <p class="work-note">車二台分を確保しながら、緑を削らずに済む配置を探しました。</p>
+        </div>
+      </article>
+
+      <article class="work reveal">
+        <div class="work-plate"></div>
+        <div class="work-meta">
+          <span class="work-cat">新築外構</span>
+          <h3 class="work-title">夜を灯すアプローチ</h3>
+          <p class="work-note">足元だけを照らし、庭の輪郭は闇に残しました。全部を見せないための照明です。</p>
+        </div>
+      </article>
+
+      <article class="work reveal">
+        <div class="work-plate"></div>
+        <div class="work-meta">
+          <span class="work-cat">庭園設計・施工</span>
+          <h3 class="work-title">坪庭のある住まい</h3>
+          <p class="work-note">三畳ほどの余白に、季節を感じるものを一つだけ置きました。</p>
+        </div>
+      </article>
+
+      <article class="work reveal">
+        <div class="work-plate"></div>
+        <div class="work-meta">
+          <span class="work-cat">メンテナンス</span>
+          <h3 class="work-title">十年目の手入れ</h3>
+          <p class="work-note">育ちすぎた枝を落とし、また十年先の姿から逆算して整えました。</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
 <section class="process" id="process">
   <div class="process-inner">
-    <span class="process-eyebrow reveal">03 — Process</span>
+    <span class="process-eyebrow reveal">04 — Process</span>
     <h2 class="process-headline reveal">決めるまでを、急がない。</h2>
 
     <ol class="process-steps">
@@ -590,6 +935,68 @@
     </ol>
   </div>
 </section>
+
+<section class="company" id="company">
+  <div class="company-inner">
+    <span class="company-eyebrow reveal">05 — Company</span>
+    <h2 class="company-headline reveal">庭に、人を招く仕事です。</h2>
+    <p class="company-lede reveal">
+      図面を引くのも、石を据えるのも、その後の手入れに伺うのも同じ人間です。<br>
+      だから、一度お話ししてから決めていただくのが一番確かだと考えています。
+    </p>
+
+    <table class="company-table reveal">
+      <tbody>
+        <tr><th>屋号</th><td>宍倉造園</td></tr>
+        <tr><th>代表</th><td>［代表者名］</td></tr>
+        <tr><th>所在地</th><td>［所在地］</td></tr>
+        <tr><th>事業内容</th><td>庭園設計・施工／外構・エクステリア工事／剪定・メンテナンス</td></tr>
+        <tr><th>対応エリア</th><td>［対応エリア］</td></tr>
+        <tr><th>連絡先</th><td>［電話番号］／［メールアドレス］</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <span class="contact-eyebrow reveal">06 — Contact</span>
+    <h2 class="contact-headline reveal">まずは、敷地を見せてください。</h2>
+    <p class="contact-lede reveal">
+      ご相談だけでも構いません。まだ何も決まっていない段階のご連絡が、いちばん良い庭になります。
+    </p>
+
+    <form class="contact-form reveal" id="contact-form" novalidate>
+      <div class="field">
+        <label for="cf-name">お名前</label>
+        <input type="text" id="cf-name" name="name" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="cf-email">メールアドレス</label>
+        <input type="email" id="cf-email" name="email" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="cf-place">敷地の場所（市区町村まで）</label>
+        <input type="text" id="cf-place" name="place">
+      </div>
+      <div class="field">
+        <label for="cf-body">ご相談の内容</label>
+        <textarea id="cf-body" name="body" rows="5"></textarea>
+      </div>
+
+      <button class="contact-submit" type="submit">送信する</button>
+      <p class="contact-note">※ 現在このフォームは仮設置です。送信先の設定が済むまで、内容は送信されません。</p>
+      <p class="contact-status" id="contact-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <img class="footer-logo" src="images/logo.png" alt="宍倉造園">
+    <small>&copy; 宍倉造園</small>
+  </div>
+</footer>
 
 <script src="https://unpkg.com/lenis@1/dist/lenis.min.js"></script>
 <script>
@@ -722,6 +1129,19 @@
     window.addEventListener('scroll', onValueScroll, { passive: true });
     window.addEventListener('resize', onValueScroll);
     updateValueScrub();
+  }
+
+  // Contact form is deliberately not wired to a backend yet. Rather than let
+  // a submit navigate away and look like it worked, intercept it and say
+  // plainly that nothing was sent — a form that silently drops enquiries is
+  // worse than no form at all.
+  const contactForm = document.getElementById('contact-form');
+  const contactStatus = document.getElementById('contact-status');
+  if (contactForm && contactStatus) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      contactStatus.textContent = '申し訳ありません、フォームはまだ準備中で送信できません。お手数ですが、上記の連絡先までご連絡ください。';
+    });
   }
 
   // General scroll reveal (base 1-pattern, reused by every section after the hero)
